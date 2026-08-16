@@ -1,0 +1,70 @@
+{
+  "id": "jsx",
+  "title": "JSX синтаксис",
+  "documents": [
+    {
+      "id": "jsx-basics",
+      "title": "Основы JSX",
+      "contentFile": "src/data/lessons/react-basics/jsx/jsx-basics.md"
+    },
+    {
+      "id": "conditional-rendering",
+      "title": "Условный рендеринг",
+      "contentFile": "src/data/lessons/react-basics/jsx/conditional-rendering.md"
+    },
+    {
+      "id": "list-rendering",
+      "title": "Списки рендеринга",
+      "contentFile": "src/data/lessons/react-basics/jsx/list-rendering.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "Какой синтаксис используется для добавления CSS-класса в JSX?",
+      "options": [
+        "class=\"name\"",
+        "className=\"name\"",
+        "css=\"name\"",
+        "style=\"name\""
+      ],
+      "correctAnswer": "className=\"name\""
+    },
+    {
+      "id": "task-4",
+      "type": "choice",
+      "question": "Каким символом обозначаются JavaScript-выражения в JSX?",
+      "options": ["( )", "{{ }}", "{ }", "[ ]"],
+      "correctAnswer": "{ }"
+    },
+    {
+      "id": "task-5",
+      "type": "open",
+      "question": "Какой атрибут нужно добавлять каждому элементу при рендеринге списка в React?",
+      "acceptableAnswers": ["key", "ключ"]
+    },
+    {
+      "id": "jsx-expression",
+      "type": "coding",
+      "kind": "file",
+      "question": "Использование выражений в JSX",
+      "instructions": "Создайте файл Profile.jsx. Компонент принимает пропсы name и age и выводит:\n- 'Привет, {name}!' внутри <h1>\n- 'Тебе {age} лет' внутри <p>",
+      "criteria": [
+        "Файл Profile.jsx создан",
+        "Компонент — функция",
+        "Использует {name} внутри JSX",
+        "Использует {age} внутри JSX",
+        "Экспорт по умолчанию"
+      ],
+      "starterCode": "",
+      "expectedFiles": ["Profile.jsx"]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Документация JSX",
+      "url": "https://react.dev/learn/writing-markup-with-jsx"
+    }
+  ]
+}

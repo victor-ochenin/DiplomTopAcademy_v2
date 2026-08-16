@@ -1,0 +1,64 @@
+{
+  "id": "react-compiler",
+  "title": "React Compiler",
+  "documents": [
+    {
+      "id": "overview",
+      "title": "Обзор React Compiler",
+      "contentFile": "src/data/lessons/react-server-components/react-compiler/overview.md"
+    },
+    {
+      "id": "rules-of-react",
+      "title": "Правила React",
+      "contentFile": "src/data/lessons/react-server-components/react-compiler/rules-of-react.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Что оптимизирует React Compiler?",
+      "options": [
+        "Автоматические useCallback и useMemo",
+        "Сборку бандла",
+        "Загрузку данных",
+        "Стили компонентов"
+      ],
+      "correctAnswer": "Автоматические useCallback и useMemo"
+    },
+    {
+      "id": "task-2",
+      "type": "choice",
+      "question": "Что должно возвращать тело чистой (pure) компоненты при одинаковых пропсах?",
+      "options": [
+        "Тот же JSX",
+        "Разный JSX",
+        "Случайный JSX",
+        "undefined"
+      ],
+      "correctAnswer": "Тот же JSX"
+    },
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "При каком условии React Compiler может отключить оптимизацию для компонента?",
+      "options": [
+        "При использовании нечистых выражений",
+        "При отсутствии memo()",
+        "При использовании TypeScript",
+        "При большом размере файла"
+      ],
+      "correctAnswer": "При использовании нечистых выражений"
+    }
+  ],
+  "resources": [
+    {
+      "title": "React Compiler",
+      "url": "https://react.dev/learn/react-compiler"
+    },
+    {
+      "title": "Rules of React",
+      "url": "https://react.dev/reference/rules"
+    }
+  ]
+}

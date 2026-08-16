@@ -1,0 +1,63 @@
+{
+  "id": "actions-form-handling",
+  "title": "Actions и работа с формами",
+  "documents": [
+    {
+      "id": "understanding-actions",
+      "title": "Понимание Actions в React 19",
+      "contentFile": "src/data/lessons/react-19-patterns/actions-form-handling/understanding-actions.md"
+    },
+    {
+      "id": "use-action-state",
+      "title": "Хук useActionState",
+      "contentFile": "src/data/lessons/react-19-patterns/actions-form-handling/use-action-state-hook.md"
+    },
+    {
+      "id": "form-actions",
+      "title": "Form Actions и прогрессивное улучшение",
+      "contentFile": "src/data/lessons/react-19-patterns/actions-form-handling/form-actions-enhancement.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Какова основная цель React Actions?",
+      "options": [
+        "Управление побочными эффектами в компонентах",
+        "Обработка асинхронных переходов и отправки форм",
+        "Полная замена useState",
+        "Стилизация компонентов"
+      ],
+      "correctAnswer": "Обработка асинхронных переходов и отправки форм"
+    },
+    {
+      "id": "task-2",
+      "type": "open",
+      "question": "Какой хук используется для управления состоянием с Actions в формах React 19?",
+      "acceptableAnswers": ["useActionState", "useactionstate"]
+    },
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "Что означает прогрессивное улучшение в контексте Form Actions?",
+      "options": [
+        "Формы работают только при включённом JavaScript",
+        "Формы работают ещё до загрузки JavaScript, затем постепенно получают расширенное поведение",
+        "Формы автоматически стилизуются через CSS",
+        "Формы требуют серверного фреймворка"
+      ],
+      "correctAnswer": "Формы работают ещё до загрузки JavaScript, затем постепенно получают расширенное поведение"
+    }
+  ],
+  "resources": [
+    {
+      "title": "Релиз React 19 — официальный блог",
+      "url": "https://react.dev/blog/2024/12/05/react-19"
+    },
+    {
+      "title": "Документация useActionState",
+      "url": "https://react.dev/reference/react/useActionState"
+    }
+  ]
+}

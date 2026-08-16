@@ -1,0 +1,93 @@
+{
+  "id": "useeffect",
+  "title": "useEffect",
+  "documents": [
+    {
+      "id": "useeffect-basics",
+      "title": "useEffect Basics",
+      "contentFile": "src/data/lessons/react-basics/useeffect/useeffect-basics.md"
+    },
+    {
+      "id": "useeffect-dependencies",
+      "title": "useEffect Dependencies",
+      "contentFile": "src/data/lessons/react-basics/useeffect/useeffect-dependencies.md"
+    },
+    {
+      "id": "cleanup-functions",
+      "title": "Cleanup Functions",
+      "contentFile": "src/data/lessons/react-basics/useeffect/cleanup-functions.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-15",
+      "type": "choice",
+      "question": "Что произойдёт, если передать пустой массив зависимостей [] в useEffect?",
+      "options": [
+        "Эффект не выполнится ни разу",
+        "Эффект выполнится только после первого рендера",
+        "Эффект будет выполняться при каждом рендере",
+        "Вызовется ошибка"
+      ],
+      "correctAnswer": "Эффект выполнится только после первого рендера"
+    },
+    {
+      "id": "task-16",
+      "type": "choice",
+      "question": "Как часто выполняется эффект без массива зависимостей?",
+      "options": [
+        "Только один раз",
+        "При каждом рендере",
+        "Только при монтировании",
+        "Никогда"
+      ],
+      "correctAnswer": "При каждом рендере"
+    },
+    {
+      "id": "task-17",
+      "type": "choice",
+      "question": "Когда вызывается cleanup-функция в useEffect?",
+      "options": [
+        "Перед монтированием компонента",
+        "Перед каждым перерендером и при размонтировании",
+        "Только при размонтировании",
+        "При каждом обновлении состояния"
+      ],
+      "correctAnswer": "Перед каждым перерендером и при размонтировании"
+    },
+    {
+      "id": "task-18",
+      "type": "open",
+      "question": "Какая проблема может возникнуть, если указать не все зависимости в массиве useEffect?",
+      "acceptableAnswers": [
+        "stale closure",
+        "устаревшее замыкание",
+        "stale state",
+        "устаревшие данные",
+        "неактуальное состояние"
+      ]
+    },
+    {
+      "id": "timer-component",
+      "type": "coding",
+      "kind": "file",
+      "question": "Таймер с useEffect",
+      "instructions": "Создайте Timer.jsx. Компонент показывает секунды с момента монтирования. Используйте useEffect с setInterval.",
+      "criteria": [
+        "Файл Timer.jsx создан",
+        "Использует useState для секунд",
+        "Использует useEffect с setInterval",
+        "setInterval очищается при размонтировании",
+        "Секунды отображаются на экране"
+      ],
+      "starterCode": "",
+      "expectedFiles": ["Timer.jsx"]
+    }
+  ],
+  "resources": [
+    {
+      "title": "useEffect – React Docs",
+      "url": "https://react.dev/reference/react/useEffect"
+    }
+  ]
+}

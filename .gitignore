@@ -1,0 +1,18 @@
+# артефакты расширения (были в nodomia/.gitignore)
+out
+dist
+node_modules
+*.vsix
+*.map
+.vscode/
+.vscode-test/
+
+# секреты
+.env
+.env.*
+!.env.example
+
+docs/
+
+# сервер: рабочие данные (уроки, веб-источники, БД Chroma) — НЕ в репозитории
+server/data/

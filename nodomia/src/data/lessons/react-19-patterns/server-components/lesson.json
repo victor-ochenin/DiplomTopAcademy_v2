@@ -1,0 +1,67 @@
+{
+  "id": "server-components",
+  "title": "Серверные компоненты",
+  "documents": [
+    {
+      "id": "server-components-explained",
+      "title": "Обзор серверных компонентов",
+      "contentFile": "src/data/lessons/react-19-patterns/server-components/server-components-explained.md"
+    },
+    {
+      "id": "server-client-boundary",
+      "title": "Граница сервера и клиента",
+      "contentFile": "src/data/lessons/react-19-patterns/server-components/server-client-boundary.md"
+    },
+    {
+      "id": "patterns",
+      "title": "Паттерны серверных компонентов",
+      "contentFile": "src/data/lessons/react-19-patterns/server-components/patterns.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Какой тип компонента является стандартным (по умолчанию) в React 19?",
+      "options": [
+        "Клиентский компонент",
+        "Серверный компонент",
+        "Гибридный компонент",
+        "Зависит от фреймворка"
+      ],
+      "correctAnswer": "Серверный компонент"
+    },
+    {
+      "id": "task-2",
+      "type": "choice",
+      "question": "Какая из возможностей доступна только в Клиентских компонентах?",
+      "options": [
+        "Чтение файловой системы",
+        "Использование хуков useState и useEffect",
+        "Прямой доступ к базе данных",
+        "Рендеринг на сервере"
+      ],
+      "correctAnswer": "Использование хуков useState и useEffect"
+    },
+    {
+      "id": "task-3",
+      "type": "open",
+      "question": "Почему в Серверных компонентах нельзя использовать хуки?",
+      "acceptableAnswers": [
+        "серверные компоненты рендерятся один раз на сервере и не имеют состояния",
+        "они выполняются на сервере и не перерендериваются, поэтому хуки не имеют смысла",
+        "хуки работают только в браузере, а серверные компоненты не имеют доступа к DOM"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "title": "React Server Components",
+      "url": "https://react.dev/reference/rsc/server-components"
+    },
+    {
+      "title": "Server-Client Boundary",
+      "url": "https://react.dev/reference/rsc/server-client-boundary"
+    }
+  ]
+}

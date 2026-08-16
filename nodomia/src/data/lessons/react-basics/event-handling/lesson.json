@@ -1,0 +1,80 @@
+{
+  "id": "event-handling",
+  "title": "Event Handling",
+  "documents": [
+    {
+      "id": "handling-events",
+      "title": "Handling Events in React",
+      "contentFile": "src/data/lessons/react-basics/event-handling/handling-events.md"
+    },
+    {
+      "id": "synthetic-events",
+      "title": "React Synthetic Events",
+      "contentFile": "src/data/lessons/react-basics/event-handling/synthetic-events.md"
+    },
+    {
+      "id": "event-patterns",
+      "title": "Event Handling Patterns",
+      "contentFile": "src/data/lessons/react-basics/event-handling/event-patterns.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-19",
+      "type": "choice",
+      "question": "Какое соглашение об именовании обработчиков событий принято в React?",
+      "options": [
+        "onClick={handleClick}",
+        "onclick={handleclick}",
+        "on-click={handle-click}",
+        "onClick={clickHandler}"
+      ],
+      "correctAnswer": "onClick={handleClick}"
+    },
+    {
+      "id": "task-20",
+      "type": "choice",
+      "question": "Какой синтаксис используется для передачи аргумента в обработчик события?",
+      "options": [
+        "onClick={handleClick(arg)}",
+        "onClick={() => handleClick(arg)}",
+        "onClick={handleClick.bind(arg)}",
+        "onClick={handleClick, arg}"
+      ],
+      "correctAnswer": "onClick={() => handleClick(arg)}"
+    },
+    {
+      "id": "task-21",
+      "type": "open",
+      "question": "Какой метод Event необходимо вызвать, чтобы отменить действие браузера по умолчанию (например, отправку формы)?",
+      "acceptableAnswers": [
+        "preventDefault",
+        "e.preventDefault()",
+        "event.preventDefault()",
+        "prevent default"
+      ]
+    },
+    {
+      "id": "form-submit",
+      "type": "coding",
+      "kind": "file",
+      "question": "Форма с обработчиком submit",
+      "instructions": "Создайте SimpleForm.jsx. Форма с одним полем ввода и кнопкой. При сабмите выводится alert со значением поля.",
+      "criteria": [
+        "Файл SimpleForm.jsx создан",
+        "Есть input с состоянием",
+        "Есть кнопка сабмита",
+        "Сабмит предотвращает перезагрузку",
+        "alert показывает введённое значение"
+      ],
+      "starterCode": "",
+      "expectedFiles": ["SimpleForm.jsx"]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Responding to Events",
+      "url": "https://react.dev/learn/responding-to-events"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "streaming-suspense",
+  "title": "Streaming и Suspense",
+  "documents": [
+    {
+      "id": "streaming",
+      "title": "Стриминг серверного рендеринга",
+      "contentFile": "src/data/lessons/react-server-components/streaming-suspense/streaming.md"
+    },
+    {
+      "id": "loading-patterns",
+      "title": "Паттерны состояния загрузки",
+      "contentFile": "src/data/lessons/react-server-components/streaming-suspense/loading-patterns.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Какая оболочка (layout) используется для стриминга серверного рендеринга?",
+      "options": [
+        "<Suspense>",
+        "<Stream>",
+        "<Await>",
+        "<Defer>"
+      ],
+      "correctAnswer": "<Suspense>"
+    },
+    {
+      "id": "task-2",
+      "type": "open",
+      "question": "Как сгруппировать несколько элементов под одним состоянием загрузки?",
+      "acceptableAnswers": [
+        "обернуть все элементы в один <Suspense>",
+        "поместить несколько компонентов в общий <Suspense fallback={...}>",
+        "использовать один <Suspense> для нескольких дочерних элементов"
+      ]
+    },
+    {
+      "id": "task-3",
+      "type": "open",
+      "question": "Какие преимущества даёт стриминг серверного рендеринга?",
+      "acceptableAnswers": [
+        "страница начинает отображаться раньше, TTFB улучшается",
+        "пользователь видит контент постепенно, не ждёт весь HTML",
+        "ускорение First Paint и Time To Interactive"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Suspense",
+      "url": "https://react.dev/reference/react/Suspense"
+    },
+    {
+      "title": "Streaming Server Rendering",
+      "url": "https://react.dev/reference/rsc/streaming"
+    }
+  ]
+}

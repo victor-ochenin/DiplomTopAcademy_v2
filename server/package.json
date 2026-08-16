@@ -1,0 +1,30 @@
+{
+  "name": "nodomia-server",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "node -e \"const fs=require('fs');fs.rmSync('./data/lessons', {recursive:true,force:true});fs.cpSync('../nodomia/src/data/lessons', './data/lessons', {recursive:true})\"",
+    "dev": "npx tsx watch src/index.ts",
+    "start": "npx tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13",
+    "@langchain/core": "^0.3",
+    "@langchain/openai": "^0.4",
+    "cheerio": "^1.0",
+    "chromadb": "^2.1",
+    "dotenv": "^16.4",
+    "hono": "^4.7",
+    "zod": "^3.25"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14",
+    "tsx": "^4.19",
+    "typescript": "^5.8",
+    "vitest": "^4.1.9"
+  }
+}

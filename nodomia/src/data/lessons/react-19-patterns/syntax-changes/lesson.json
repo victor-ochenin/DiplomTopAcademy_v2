@@ -1,0 +1,67 @@
+{
+  "id": "syntax-changes",
+  "title": "Изменения синтаксиса React 19",
+  "documents": [
+    {
+      "id": "ref-as-prop",
+      "title": "ref как обычный проп",
+      "contentFile": "src/data/lessons/react-19-patterns/syntax-changes/ref-as-prop.md"
+    },
+    {
+      "id": "context-provider",
+      "title": "Context как провайдер",
+      "contentFile": "src/data/lessons/react-19-patterns/syntax-changes/context-provider.md"
+    },
+    {
+      "id": "migration-guide",
+      "title": "Гайд по миграции на React 19",
+      "contentFile": "src/data/lessons/react-19-patterns/syntax-changes/migration-guide.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "open",
+      "question": "Какие изменения произошли с forwardRef в React 19? Как теперь передавать ref?",
+      "acceptableAnswers": [
+        "forwardRef больше не нужен, ref передаётся как обычный проп",
+        "ref стал обычным пропом, forwardRef объявлен устаревшим",
+        "можно использовать ref напрямую как props.ref без forwardRef"
+      ]
+    },
+    {
+      "id": "task-2",
+      "type": "choice",
+      "question": "Как теперь выглядит создание контекста и провайдера в React 19?",
+      "options": [
+        "const Theme = createContext('light'); <Theme.Provider value='dark'><App /></Theme.Provider>",
+        "const Theme = createContext('light'); <Theme value='dark'><App /></Theme>",
+        "const Theme = createContext('light'); <Theme.Provider><App value='dark' /></Theme.Provider>",
+        "const Theme = createContext('light'); <ThemeContext.Provider value='dark'><App /></ThemeContext.Provider>"
+      ],
+      "correctAnswer": "const Theme = createContext('light'); <Theme value='dark'><App /></Theme>"
+    },
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "Какой первый шаг в миграции на React 19?",
+      "options": [
+        "Переписать все компоненты на серверные",
+        "Обновить React и ReactDOM до версии 19",
+        "Удалить все классовые компоненты",
+        "Заменить Redux на useReducer"
+      ],
+      "correctAnswer": "Обновить React и ReactDOM до версии 19"
+    }
+  ],
+  "resources": [
+    {
+      "title": "React 19 Upgrade Guide",
+      "url": "https://react.dev/blog/2024/12/05/react-19#upgrade-guide"
+    },
+    {
+      "title": "React 19 — ref as a prop",
+      "url": "https://react.dev/blog/2024/12/05/react-19#ref-as-a-prop"
+    }
+  ]
+}

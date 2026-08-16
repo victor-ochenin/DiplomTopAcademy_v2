@@ -1,0 +1,67 @@
+{
+  "id": "best-practices",
+  "title": "Лучшие практики",
+  "documents": [
+    {
+      "id": "component-design",
+      "title": "Принципы дизайна компонентов",
+      "contentFile": "src/data/lessons/react-19-patterns/best-practices/component-design.md"
+    },
+    {
+      "id": "code-organization",
+      "title": "Организация кода",
+      "contentFile": "src/data/lessons/react-19-patterns/best-practices/code-organization.md"
+    },
+    {
+      "id": "state-management",
+      "title": "Паттерны управления состоянием",
+      "contentFile": "src/data/lessons/react-19-patterns/best-practices/state-management.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Какой из методов помогает избежать Prop Drilling?",
+      "options": [
+        "Использование глобальных переменных",
+        "Композиция через children и Context",
+        "Копирование пропсов на каждом уровне",
+        "Объединение всех данных в один объект"
+      ],
+      "correctAnswer": "Композиция через children и Context"
+    },
+    {
+      "id": "task-2",
+      "type": "open",
+      "question": "Назови три принципа проектирования компонентов из React Best Practices.",
+      "acceptableAnswers": [
+        "единственная ответственность, композиция вместо наследования, иммутабельность данных",
+        "single responsibility, composition over inheritance, immutable data",
+        "один компонент — одна задача, композиция через children, данные не изменяются напрямую"
+      ]
+    },
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "Какой подход рекомендуется для организации state в React-приложении?",
+      "options": [
+        "Хранить все данные в одном глобальном store",
+        "Максимально близко к месту использования, поднимать при необходимости",
+        "Всегда использовать Redux",
+        "Хранить состояние только в URL"
+      ],
+      "correctAnswer": "Максимально близко к месту использования, поднимать при необходимости"
+    }
+  ],
+  "resources": [
+    {
+      "title": "React — Thinking in React",
+      "url": "https://react.dev/learn/thinking-in-react"
+    },
+    {
+      "title": "React — правила композиции",
+      "url": "https://react.dev/learn/keeping-components-pure"
+    }
+  ]
+}

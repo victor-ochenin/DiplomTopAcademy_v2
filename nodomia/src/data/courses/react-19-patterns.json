@@ -1,0 +1,16 @@
+{
+  "id": "react-19-patterns",
+  "title": "React 19 и паттерны",
+  "description": "Освойте возможности React 19: Actions, серверные компоненты, серверные функции и продвинутые паттерны композиции.",
+  "level": "intermediate",
+  "icon": "<svg viewBox=\"0 0 100 100\" fill=\"none\"><ellipse cx=\"50\" cy=\"50\" rx=\"42\" ry=\"16\" stroke=\"#61dafb\" strokeWidth=\"2.5\" transform=\"rotate(0 50 50)\" fill=\"none\"/><ellipse cx=\"50\" cy=\"50\" rx=\"42\" ry=\"16\" stroke=\"#61dafb\" strokeWidth=\"2.5\" transform=\"rotate(60 50 50)\" fill=\"none\"/><ellipse cx=\"50\" cy=\"50\" rx=\"42\" ry=\"16\" stroke=\"#61dafb\" strokeWidth=\"2.5\" transform=\"rotate(120 50 50)\" fill=\"none\"/><circle cx=\"50\" cy=\"50\" r=\"5\" fill=\"#61dafb\"/></svg>",
+  "lessons": [
+    "src/data/lessons/react-19-patterns/actions-form-handling/lesson.json",
+    "src/data/lessons/react-19-patterns/new-react-19-hooks/lesson.json",
+    "src/data/lessons/react-19-patterns/server-components/lesson.json",
+    "src/data/lessons/react-19-patterns/server-functions/lesson.json",
+    "src/data/lessons/react-19-patterns/syntax-changes/lesson.json",
+    "src/data/lessons/react-19-patterns/composition-patterns/lesson.json",
+    "src/data/lessons/react-19-patterns/best-practices/lesson.json"
+  ]
+}

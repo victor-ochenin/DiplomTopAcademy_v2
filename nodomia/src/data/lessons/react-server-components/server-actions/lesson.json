@@ -1,0 +1,93 @@
+{
+  "id": "server-actions",
+  "title": "Server Actions",
+  "documents": [
+    {
+      "id": "intro",
+      "title": "Введение в Server Actions",
+      "contentFile": "src/data/lessons/react-server-components/server-actions/intro.md"
+    },
+    {
+      "id": "form-handling",
+      "title": "Обработка форм с Actions",
+      "contentFile": "src/data/lessons/react-server-components/server-actions/form-handling.md"
+    },
+    {
+      "id": "security",
+      "title": "Безопасность Server Actions",
+      "contentFile": "src/data/lessons/react-server-components/server-actions/security.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Какую директиву нужно указать в начале файла для создания Server Action?",
+      "options": [
+        "'use server'",
+        "'use action'",
+        "'use client'",
+        "'server action'"
+      ],
+      "correctAnswer": "'use server'"
+    },
+    {
+      "id": "task-2",
+      "type": "choice",
+      "question": "Что возвращает useActionState()?",
+      "options": [
+        "[state, action, isPending]",
+        "[state, action]",
+        "[action, state]",
+        "[state, dispatch]"
+      ],
+      "correctAnswer": "[state, action, isPending]"
+    },
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "Где должен быть расположен компонент, использующий useFormStatus()?",
+      "options": [
+        "Внутри элемента <form>",
+        "В любом месте страницы",
+        "Только в серверном компоненте",
+        "Только в родителе формы"
+      ],
+      "correctAnswer": "Внутри элемента <form>"
+    },
+    {
+      "id": "task-4",
+      "type": "open",
+      "question": "Как работает прогрессивное улучшение (progressive enhancement) в Server Actions?",
+      "acceptableAnswers": [
+        "форма работает даже без JavaScript благодаря action атрибуту",
+        "серверный action выполняется и без JS, и с JS",
+        "форма отправляется на сервер нативно, если JS не загрузился"
+      ]
+    },
+    {
+      "id": "task-5",
+      "type": "open",
+      "question": "Какие меры безопасности нужно применять при работе с Server Actions?",
+      "acceptableAnswers": [
+        "валидация данных на сервере, авторизация, csrf защита",
+        "проверять права доступа, не доверять пользовательскому вводу",
+        "валидация, авторизация, rate limiting"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Server Actions",
+      "url": "https://react.dev/reference/rsc/server-actions"
+    },
+    {
+      "title": "useActionState",
+      "url": "https://react.dev/reference/react-dom/hooks/useActionState"
+    },
+    {
+      "title": "useFormStatus",
+      "url": "https://react.dev/reference/react-dom/hooks/useFormStatus"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": "what-is-react",
+  "title": "Что такое React?",
+  "documents": [
+    {
+      "id": "intro",
+      "title": "Введение в React",
+      "contentFile": "src/data/lessons/react-basics/what-is-react/what-is-react.md"
+    },
+    {
+      "id": "setup",
+      "title": "Настройка проекта React",
+      "contentFile": "src/data/lessons/react-basics/what-is-react/setup-react.md"
+    },
+    {
+      "id": "virtual-dom",
+      "title": "Виртуальный DOM",
+      "contentFile": "src/data/lessons/react-basics/what-is-react/virtual-dom.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Что такое React?",
+      "options": [
+        "Фреймворк для серверных приложений",
+        "Библиотека для построения UI",
+        "Язык программирования",
+        "База данных"
+      ],
+      "correctAnswer": "Библиотека для построения UI"
+    },
+    {
+      "id": "task-2",
+      "type": "open",
+      "question": "Какая основная задача React?",
+      "acceptableAnswers": [
+        "построение пользовательских интерфейсов",
+        "создание ui",
+        "построение ui"
+      ]
+    },
+    {
+      "id": "create-vite-project",
+      "type": "coding",
+      "kind": "project",
+      "question": "Создайте новый React-проект",
+      "instructions": "Создайте новый React-проект через Vite: npm create vite@latest my-app -- --template react. Проверьте, что в проекте есть стандартная структура Vite React.",
+      "criteria": [
+        "Есть package.json",
+        "Есть index.html",
+        "Есть src/main.jsx",
+        "В package.json присутствуют react и react-dom"
+      ],
+      "starterCode": "",
+      "expectedFiles": ["package.json", "index.html", "src/main.jsx"]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Официальная документация React",
+      "url": "https://react.dev"
+    }
+  ]
+}

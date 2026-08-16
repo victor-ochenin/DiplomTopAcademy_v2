@@ -1,0 +1,74 @@
+{
+  "id": "controlled-components",
+  "title": "Controlled Components",
+  "documents": [
+    {
+      "id": "controlled-vs-uncontrolled",
+      "title": "Controlled vs Uncontrolled Components",
+      "contentFile": "src/data/lessons/react-basics/controlled-components/controlled-vs-uncontrolled.md"
+    },
+    {
+      "id": "form-state-management",
+      "title": "Form State Management",
+      "contentFile": "src/data/lessons/react-basics/controlled-components/form-state-management.md"
+    },
+    {
+      "id": "form-validation",
+      "title": "Form Validation Patterns",
+      "contentFile": "src/data/lessons/react-basics/controlled-components/form-validation.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-22",
+      "type": "choice",
+      "question": "Что такое контролируемый компонент в React?",
+      "options": [
+        "Компонент, значение которого управляется через state",
+        "Компонент с фиксированными props",
+        "Компонент без состояния",
+        "Компонент, который контролирует дочерние элементы"
+      ],
+      "correctAnswer": "Компонент, значение которого управляется через state"
+    },
+    {
+      "id": "task-23",
+      "type": "choice",
+      "question": "Какой атрибут используется для привязки значения input к state?",
+      "options": ["value", "defaultValue", "bind", "model"],
+      "correctAnswer": "value"
+    },
+    {
+      "id": "task-24",
+      "type": "open",
+      "question": "Какой атрибут input используется для связывания с React-состоянием без контроля со стороны React?",
+      "acceptableAnswers": [
+        "defaultValue",
+        "default value",
+        "defaultvalue"
+      ]
+    },
+    {
+      "id": "controlled-input",
+      "type": "coding",
+      "kind": "file",
+      "question": "Контролируемый input",
+      "instructions": "Создайте ColorPicker.jsx. Input type='color', значение в state, текущий цвет показывается как background-color div.",
+      "criteria": [
+        "Файл ColorPicker.jsx создан",
+        "Input привязан к state (controlled)",
+        "Цвет отображается как фон",
+        "Начальное значение — #ff0000",
+        "Экспорт по умолчанию"
+      ],
+      "starterCode": "",
+      "expectedFiles": ["ColorPicker.jsx"]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Controlled vs Uncontrolled Inputs",
+      "url": "https://react.dev/learn/sharing-state-between-components#controlled-and-uncontrolled-components"
+    }
+  ]
+}

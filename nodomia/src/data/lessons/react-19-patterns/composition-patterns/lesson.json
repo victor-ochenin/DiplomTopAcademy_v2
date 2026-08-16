@@ -1,0 +1,64 @@
+{
+  "id": "composition-patterns",
+  "title": "Паттерны композиции",
+  "documents": [
+    {
+      "id": "compound-components",
+      "title": "Compound Components",
+      "contentFile": "src/data/lessons/react-19-patterns/composition-patterns/compound-components.md"
+    },
+    {
+      "id": "render-props",
+      "title": "Паттерн Render Props",
+      "contentFile": "src/data/lessons/react-19-patterns/composition-patterns/render-props.md"
+    },
+    {
+      "id": "hoc",
+      "title": "Higher-Order Components (HOC)",
+      "contentFile": "src/data/lessons/react-19-patterns/composition-patterns/hoc.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "open",
+      "question": "Какие преимущества даёт паттерн Compound Components по сравнению с передачей всех пропсов через один компонент?",
+      "acceptableAnswers": [
+        "гибкость в расположении дочерних элементов, изолированное состояние, читаемый JSX",
+        "компоненты можно располагать в любом порядке, каждый управляет своим состоянием",
+        "более декларативный API, разделение ответственности, гибкая композиция"
+      ]
+    },
+    {
+      "id": "task-2",
+      "type": "choice",
+      "question": "В каком сценарии Render Props предпочтительнее HOC?",
+      "options": [
+        "Когда нужно добавить однотипное поведение множеству компонентов",
+        "Когда нужно гибко контролировать, что и как рендерится внутри компонента",
+        "Когда компонент работает с серверными данными",
+        "Когда нужно мемоизировать пропсы"
+      ],
+      "correctAnswer": "Когда нужно гибко контролировать, что и как рендерится внутри компонента"
+    },
+    {
+      "id": "task-3",
+      "type": "open",
+      "question": "Опиши пошагово, как создать Compound Component для выпадающего списка (Dropdown) с компонентами Trigger, Menu и Item.",
+      "acceptableAnswers": [
+        "создать контекст DropdownContext, внутри Dropdown хранить isOpen/toggle, Trigger вызывает toggle, Menu рендерит children если isOpen, Item использует onSelect из контекста",
+        "использовать createContext для состояния, Dropdown как корневой компонент с Context.Provider, Trigger для открытия/закрытия, Menu для отображения списка, Item для элементов списка"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Compound Components — React Patterns",
+      "url": "https://react.dev/learn/passing-data-deeply-with-context"
+    },
+    {
+      "title": "Render Props — документация",
+      "url": "https://react.dev/reference/react/cloneElement#passing-data-with-a-render-prop"
+    }
+  ]
+}

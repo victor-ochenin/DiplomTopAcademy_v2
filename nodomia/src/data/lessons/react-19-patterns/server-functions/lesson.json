@@ -1,0 +1,67 @@
+{
+  "id": "server-functions",
+  "title": "Серверные функции",
+  "documents": [
+    {
+      "id": "server-functions-intro",
+      "title": "Серверные функции (Server Actions)",
+      "contentFile": "src/data/lessons/react-19-patterns/server-functions/intro.md"
+    },
+    {
+      "id": "server-function-patterns",
+      "title": "Паттерны серверных функций",
+      "contentFile": "src/data/lessons/react-19-patterns/server-functions/patterns.md"
+    },
+    {
+      "id": "server-function-security",
+      "title": "Безопасность серверных функций",
+      "contentFile": "src/data/lessons/react-19-patterns/server-functions/security.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Какой директивой обозначается Server Function?",
+      "options": [
+        "'use server'",
+        "'use api'",
+        "'server function'",
+        "'async function'"
+      ],
+      "correctAnswer": "'use server'"
+    },
+    {
+      "id": "task-2",
+      "type": "open",
+      "question": "В чём разница между 'use server' на уровне файла и на уровне функции?",
+      "acceptableAnswers": [
+        "на уровне файла все функции становятся серверными, на уровне функции — только конкретная",
+        "file directive делает весь файл серверным, function directive — только одну функцию",
+        "на файл действует для всех экспортов, на функцию — только для неё"
+      ]
+    },
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "Какое из утверждений о Server Functions верно?",
+      "options": [
+        "Они выполняются в браузере",
+        "Они имеют доступ к базе данных и API-ключам",
+        "Они не могут быть асинхронными",
+        "Они заменяют все REST API"
+      ],
+      "correctAnswer": "Они имеют доступ к базе данных и API-ключам"
+    }
+  ],
+  "resources": [
+    {
+      "title": "Документация Server Actions",
+      "url": "https://react.dev/reference/rsc/server-actions"
+    },
+    {
+      "title": "React 19 Server Functions",
+      "url": "https://react.dev/blog/2024/12/05/react-19#server-functions"
+    }
+  ]
+}

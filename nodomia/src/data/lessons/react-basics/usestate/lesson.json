@@ -1,0 +1,79 @@
+{
+  "id": "usestate",
+  "title": "useState",
+  "documents": [
+    {
+      "id": "usestate-basics",
+      "title": "useState Basics",
+      "contentFile": "src/data/lessons/react-basics/usestate/usestate-basics.md"
+    },
+    {
+      "id": "usestate-objects-arrays",
+      "title": "useState with Objects & Arrays",
+      "contentFile": "src/data/lessons/react-basics/usestate/usestate-objects-arrays.md"
+    },
+    {
+      "id": "usestate-functional-updates",
+      "title": "Functional Updates Avoid Stale State",
+      "contentFile": "src/data/lessons/react-basics/usestate/usestate-functional-updates.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-12",
+      "type": "choice",
+      "question": "Что возвращает useState?",
+      "options": [
+        "Одно значение",
+        "Массив из двух элементов: значение и функцию обновления",
+        "Объект с полями value и setValue",
+        "Кортеж из трёх элементов"
+      ],
+      "correctAnswer": "Массив из двух элементов: значение и функцию обновления"
+    },
+    {
+      "id": "task-13",
+      "type": "open",
+      "question": "Как называется функция, которая передаётся в useState для начального состояния и выполняется один раз?",
+      "acceptableAnswers": [
+        "initializer function",
+        "функция инициализации",
+        "lazy initializer"
+      ]
+    },
+    {
+      "id": "task-14",
+      "type": "choice",
+      "question": "Как правильно обновить объект в useState?",
+      "options": [
+        "setUser({ name: 'Иван' })",
+        "setUser(prev => ({ ...prev, name: 'Иван' }))",
+        "user.name = 'Иван'; setUser(user)",
+        "setUser(Object.assign(user, { name: 'Иван' }))"
+      ],
+      "correctAnswer": "setUser(prev => ({ ...prev, name: 'Иван' }))"
+    },
+    {
+      "id": "counter-component",
+      "type": "coding",
+      "kind": "file",
+      "question": "Создайте компонент счётчика",
+      "instructions": "Создайте файл Counter.jsx в корне открытой папки. Компонент должен отображать текущее значение, иметь кнопки + и -, начинаться с 0.",
+      "criteria": [
+        "Компонент определён как функция",
+        "Есть состояние count, начальное значение 0",
+        "Кнопка '+' увеличивает count на 1",
+        "Кнопка '-' уменьшает count на 1",
+        "Компонент экспортируется по умолчанию"
+      ],
+      "starterCode": "",
+      "expectedFiles": ["Counter.jsx"]
+    }
+  ],
+  "resources": [
+    {
+      "title": "useState – React Docs",
+      "url": "https://react.dev/reference/react/useState"
+    }
+  ]
+}

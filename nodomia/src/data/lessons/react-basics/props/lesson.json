@@ -1,0 +1,81 @@
+{
+  "id": "props",
+  "title": "Props",
+  "documents": [
+    {
+      "id": "passing-props",
+      "title": "Passing Props to Components",
+      "contentFile": "src/data/lessons/react-basics/props/passing-props.md"
+    },
+    {
+      "id": "children-prop",
+      "title": "The Children Prop",
+      "contentFile": "src/data/lessons/react-basics/props/children-prop.md"
+    },
+    {
+      "id": "destructuring-props",
+      "title": "Destructuring Props",
+      "contentFile": "src/data/lessons/react-basics/props/destructuring-props.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-9",
+      "type": "choice",
+      "question": "Можно ли изменить props внутри компонента?",
+      "options": [
+        "Да, через setState",
+        "Нет, props иммутабельны",
+        "Да, напрямую присвоением",
+        "Только если они переданы по ссылке"
+      ],
+      "correctAnswer": "Нет, props иммутабельны"
+    },
+    {
+      "id": "task-10",
+      "type": "choice",
+      "question": "Как задать значение по умолчанию для prop?",
+      "options": [
+        "defaultProps = { propName: value }",
+        "propName = value в параметрах",
+        "defaultProps.propName = value",
+        "propName ?? value при использовании"
+      ],
+      "correctAnswer": "propName = value в параметрах"
+    },
+    {
+      "id": "task-11",
+      "type": "choice",
+      "question": "Какие типы данных можно передавать через props?",
+      "options": [
+        "Только строки и числа",
+        "Только примитивы",
+        "Любые JavaScript значения",
+        "Только JSX"
+      ],
+      "correctAnswer": "Любые JavaScript значения"
+    },
+    {
+      "id": "card-component",
+      "type": "coding",
+      "kind": "file",
+      "question": "Компонент Card с props и children",
+      "instructions": "Создайте Card.jsx. Компонент принимает title и children. Рендерит карточку с заголовком и содержимым.",
+      "criteria": [
+        "Файл Card.jsx создан",
+        "Принимает title и children",
+        "title отображается в заголовке",
+        "children отображается под заголовком",
+        "Экспорт по умолчанию"
+      ],
+      "starterCode": "",
+      "expectedFiles": ["Card.jsx"]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Passing Props to a Component",
+      "url": "https://react.dev/learn/passing-props-to-a-component"
+    }
+  ]
+}

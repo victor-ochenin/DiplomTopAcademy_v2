@@ -1,0 +1,89 @@
+{
+  "id": "rsc-fundamentals",
+  "title": "Основы RSC",
+  "documents": [
+    {
+      "id": "what-are-rsc",
+      "title": "Что такое серверные компоненты?",
+      "contentFile": "src/data/lessons/react-server-components/rsc-fundamentals/what-are-rsc.md"
+    },
+    {
+      "id": "use-client-directive",
+      "title": "Директива 'use client'",
+      "contentFile": "src/data/lessons/react-server-components/rsc-fundamentals/use-client-directive.md"
+    },
+    {
+      "id": "server-client-composition",
+      "title": "Композиция сервера и клиента",
+      "contentFile": "src/data/lessons/react-server-components/rsc-fundamentals/server-client-composition.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Какой тип компонента является стандартным (по умолчанию) в React 19?",
+      "options": [
+        "Клиентский компонент",
+        "Серверный компонент",
+        "Гибридный компонент",
+        "Зависит от фреймворка"
+      ],
+      "correctAnswer": "Серверный компонент"
+    },
+    {
+      "id": "task-2",
+      "type": "choice",
+      "question": "Какая директива переключает компонент в клиентский режим?",
+      "options": [
+        "'use client'",
+        "'use browser'",
+        "'client component'",
+        "'use state'"
+      ],
+      "correctAnswer": "'use client'"
+    },
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "Что произойдёт, если клиентский компонент попытается импортировать серверный?",
+      "options": [
+        "Сработает ошибка сборки",
+        "Серверный компонент автоматически станет клиентским",
+        "Оба компонента будут работать на сервере",
+        "Импорт будет проигнорирован"
+      ],
+      "correctAnswer": "Сработает ошибка сборки"
+    },
+    {
+      "id": "task-4",
+      "type": "open",
+      "question": "Как можно передать серверный компонент внутрь клиентского, не нарушая границу?",
+      "acceptableAnswers": [
+        "через children как проп",
+        "передать как children",
+        "через проп children"
+      ]
+    },
+    {
+      "id": "task-5",
+      "type": "open",
+      "question": "Почему в серверных компонентах нельзя использовать хуки?",
+      "acceptableAnswers": [
+        "они рендерятся один раз на сервере и не имеют состояния",
+        "серверные компоненты не перерендериваются, хуки не имеют смысла",
+        "хуки работают только в браузере"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "title": "React Server Components",
+      "url": "https://react.dev/reference/rsc/server-components"
+    },
+    {
+      "title": "Server-Client Boundary",
+      "url": "https://react.dev/reference/rsc/server-client-boundary"
+    }
+  ]
+}

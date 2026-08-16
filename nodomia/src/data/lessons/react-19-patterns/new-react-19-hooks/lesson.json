@@ -1,0 +1,81 @@
+{
+  "id": "new-react-19-hooks",
+  "title": "Новые хуки React 19",
+  "documents": [
+    {
+      "id": "use-optimistic-intro",
+      "title": "useOptimistic — мгновенные обновления UI",
+      "contentFile": "src/data/lessons/react-19-patterns/new-react-19-hooks/use-optimistic-intro.md"
+    },
+    {
+      "id": "use-form-status-intro",
+      "title": "useFormStatus для вложенных компонентов",
+      "contentFile": "src/data/lessons/react-19-patterns/new-react-19-hooks/use-form-status-intro.md"
+    },
+    {
+      "id": "use-api-intro",
+      "title": "API use",
+      "contentFile": "src/data/lessons/react-19-patterns/new-react-19-hooks/use-api-intro.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Для чего предназначен хук useOptimistic?",
+      "options": [
+        "Для управления состоянием формы",
+        "Для оптимистичного обновления UI до завершения асинхронной операции",
+        "Для кэширования данных на клиенте",
+        "Для отложенной загрузки компонентов"
+      ],
+      "correctAnswer": "Для оптимистичного обновления UI до завершения асинхронной операции"
+    },
+    {
+      "id": "task-2",
+      "type": "open",
+      "question": "Что возвращает хук use() и из каких источников он может читать данные?",
+      "acceptableAnswers": ["значение промиса или контекста", "значение из promise или context", "результат промиса или контекст"]
+    },
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "Где должен быть расположен компонент, использующий useFormStatus?",
+      "options": [
+        "В любом месте приложения",
+        "Внутри элемента form",
+        "В корневом компоненте",
+        "Только в серверных компонентах"
+      ],
+      "correctAnswer": "Внутри элемента form"
+    },
+    {
+      "id": "task-4",
+      "type": "open",
+      "question": "Чем use() отличается от useContext при чтении контекста?",
+      "acceptableAnswers": [
+        "use может читать промисы и контекст, а useContext только контекст",
+        "use работает и с промисами и с контекстом, useContext только с контекстом",
+        "use принимает promise или context, useContext только context"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "title": "React 19 — официальный блог",
+      "url": "https://react.dev/blog/2024/12/05/react-19"
+    },
+    {
+      "title": "Документация useOptimistic",
+      "url": "https://react.dev/reference/react/useOptimistic"
+    },
+    {
+      "title": "Документация useFormStatus",
+      "url": "https://react.dev/reference/react-dom/useFormStatus"
+    },
+    {
+      "title": "Документация use API",
+      "url": "https://react.dev/reference/react/use"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "id": "async-data-fetching",
+  "title": "Асинхронная загрузка данных",
+  "documents": [
+    {
+      "id": "async-server-components",
+      "title": "Асинхронные серверные компоненты",
+      "contentFile": "src/data/lessons/react-server-components/async-data-fetching/async-server-components.md"
+    },
+    {
+      "id": "fetching-patterns",
+      "title": "Паттерны загрузки данных",
+      "contentFile": "src/data/lessons/react-server-components/async-data-fetching/fetching-patterns.md"
+    },
+    {
+      "id": "cache-function",
+      "title": "Функция cache()",
+      "contentFile": "src/data/lessons/react-server-components/async-data-fetching/cache-function.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "type": "choice",
+      "question": "Может ли серверный компонент быть асинхронным?",
+      "options": [
+        "Нет, только клиентские",
+        "Да, и это основное преимущество RSC",
+        "Только при использовании Suspense",
+        "Только в React 18"
+      ],
+      "correctAnswer": "Да, и это основное преимущество RSC"
+    },
+    {
+      "id": "task-2",
+      "type": "open",
+      "question": "Как распараллелить запросы данных в серверном компоненте? Приведи пример.",
+      "acceptableAnswers": [
+        "запустить несколько промисов через Promise.all перед рендерингом",
+        "использовать Promise.all для параллельной загрузки",
+        "запустить все fetch одновременно и дождаться Promise.all"
+      ]
+    },
+    {
+      "id": "task-3",
+      "type": "choice",
+      "question": "В какой области видимости работает кэш cache()?",
+      "options": [
+        "Глобально для всего приложения",
+        "В рамках одного запроса пользователя",
+        "В рамках одного модуля",
+        "Постоянно между перезагрузками"
+      ],
+      "correctAnswer": "В рамках одного запроса пользователя"
+    },
+    {
+      "id": "task-4",
+      "type": "open",
+      "question": "Для чего нужна функция cache() в React?",
+      "acceptableAnswers": [
+        "для кэширования результатов асинхронных операций в рамках одного запроса",
+        "чтобы не повторять одинаковые запросы данных в рамках рендера",
+        "для дедупликации параллельных запросов"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Async Server Components",
+      "url": "https://react.dev/reference/rsc/server-components#async-components"
+    },
+    {
+      "title": "Документация cache()",
+      "url": "https://react.dev/reference/react/cache"
+    }
+  ]
+}
