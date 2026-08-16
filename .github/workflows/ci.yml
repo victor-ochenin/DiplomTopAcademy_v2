@@ -23,6 +23,7 @@ jobs:
 
       - run: cd server && npm ci
       - run: cd server && cp .env.example .env
+      - run: cd server && npm run format:check
       - run: cd server && npm run typecheck
       - run: cd server && npm test
         env:
@@ -41,6 +42,7 @@ jobs:
           cache-dependency-path: nodomia/package-lock.json
 
       - run: cd nodomia && npm ci
+      - run: cd nodomia && npm run format:check
       - run: cd nodomia && npm run validate:data
       - run: cd nodomia && npm run check-types
       - run: cd nodomia && xvfb-run -a npm test
