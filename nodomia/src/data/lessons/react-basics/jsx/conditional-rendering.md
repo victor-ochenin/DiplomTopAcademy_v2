@@ -10,7 +10,7 @@ function Greeting({ isLoggedIn }: { isLoggedIn: boolean }) {
     <div>
       {isLoggedIn ? <h1>Добро пожаловать!</h1> : <h1>Войдите в систему</h1>}
     </div>
-  )
+  );
 }
 ```
 
@@ -18,11 +18,7 @@ function Greeting({ isLoggedIn }: { isLoggedIn: boolean }) {
 
 ```tsx
 function Notification({ message }: { message?: string }) {
-  return (
-    <div>
-      {message && <p className="alert">{message}</p>}
-    </div>
-  )
+  return <div>{message && <p className="alert">{message}</p>}</div>;
 }
 ```
 
@@ -33,9 +29,9 @@ function Notification({ message }: { message?: string }) {
 
 ```tsx
 function Status({ code }: { code: 'loading' | 'error' | 'success' }) {
-  if (code === 'loading') return <Spinner />
-  if (code === 'error') return <ErrorMessage />
-  return <SuccessMessage />
+  if (code === 'loading') return <Spinner />;
+  if (code === 'error') return <ErrorMessage />;
+  return <SuccessMessage />;
 }
 ```
 
@@ -44,10 +40,14 @@ function Status({ code }: { code: 'loading' | 'error' | 'success' }) {
 ```tsx
 function getStatusText(status: string) {
   switch (status) {
-    case 'active': return 'Активен'
-    case 'blocked': return 'Заблокирован'
-    case 'pending': return 'Ожидает'
-    default: return 'Неизвестно'
+    case 'active':
+      return 'Активен';
+    case 'blocked':
+      return 'Заблокирован';
+    case 'pending':
+      return 'Ожидает';
+    default:
+      return 'Неизвестно';
   }
 }
 ```

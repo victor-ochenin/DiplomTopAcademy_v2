@@ -7,13 +7,13 @@
 Чтобы сделать компонент клиентским, добавьте `'use client'` в начале файла:
 
 ```tsx
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
 function Counter() {
-  const [count, setCount] = useState(0)
-  return <button onClick={() => setCount(count + 1)}>{count}</button>
+  const [count, setCount] = useState(0);
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
 }
 ```
 

@@ -12,7 +12,7 @@ function App() {
       <MainContent />
       <Footer />
     </div>
-  )
+  );
 }
 ```
 
@@ -28,7 +28,7 @@ function ProductList() {
       <ProductCard name="Мышь" price={2500} />
       <ProductCard name="Клавиатура" price={5000} />
     </div>
-  )
+  );
 }
 ```
 
@@ -43,6 +43,6 @@ function List() {
       <li>Элемент 1</li>
       <li>Элемент 2</li>
     </>
-  )
+  );
 }
 ```

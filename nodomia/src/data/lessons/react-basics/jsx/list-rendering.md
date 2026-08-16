@@ -5,7 +5,7 @@ React позволяет легко отображать массивы данн
 ## Рендеринг массива
 
 ```tsx
-const fruits = ['Яблоко', 'Банан', 'Апельсин']
+const fruits = ['Яблоко', 'Банан', 'Апельсин'];
 
 function FruitList() {
   return (
@@ -14,7 +14,7 @@ function FruitList() {
         <li key={fruit}>{fruit}</li>
       ))}
     </ul>
-  )
+  );
 }
 ```
 
@@ -24,10 +24,14 @@ function FruitList() {
 
 ```tsx
 // ✅ Правильно: уникальный id из данных
-{items.map(item => <li key={item.id}>{item.name}</li>)}
+{
+  items.map((item) => <li key={item.id}>{item.name}</li>);
+}
 
 // ❌ Плохо: индекс массива (если порядок может меняться)
-{items.map((item, index) => <li key={index}>{item.name}</li>)}
+{
+  items.map((item, index) => <li key={index}>{item.name}</li>);
+}
 ```
 
 `key` помогает React понимать, какой элемент изменился, удалился или добавился.
@@ -36,20 +40,23 @@ function FruitList() {
 
 ```tsx
 interface User {
-  id: number
-  name: string
-  role: string
-  age: number
+  id: number;
+  name: string;
+  role: string;
+  age: number;
 }
 
 function UserTable({ users }: { users: User[] }) {
   return (
     <table>
       <thead>
-        <tr><th>Имя</th><th>Роль</th></tr>
+        <tr>
+          <th>Имя</th>
+          <th>Роль</th>
+        </tr>
       </thead>
       <tbody>
-        {users.map(user => (
+        {users.map((user) => (
           <tr key={user.id}>
             <td>{user.name}</td>
             <td>{user.role}</td>
@@ -57,13 +64,15 @@ function UserTable({ users }: { users: User[] }) {
         ))}
       </tbody>
     </table>
-  )
+  );
 }
 ```
 
 ## Фильтрация перед рендерингом
 
 ```tsx
-const adults = users.filter(user => user.age >= 18)
-{adults.map(user => <li key={user.id}>{user.name}</li>)}
+const adults = users.filter((user) => user.age >= 18);
+{
+  adults.map((user) => <li key={user.id}>{user.name}</li>);
+}
 ```

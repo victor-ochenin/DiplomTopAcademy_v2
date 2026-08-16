@@ -14,7 +14,7 @@
 ## Suspense как точка стриминга
 
 ```tsx
-import { Suspense } from 'react'
+import { Suspense } from 'react';
 
 function Page() {
   return (
@@ -27,11 +27,12 @@ function Page() {
         <Recommendations />
       </Suspense>
     </div>
-  )
+  );
 }
 ```
 
 В этом примере:
+
 - `<h1>` отправится сразу
 - `<PostsList>` и `<Recommendations>` стримятся независимо
 - Пользователь видит заголовок, пока остальное загружается

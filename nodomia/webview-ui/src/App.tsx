@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Course, CourseListItem, ExtensionMessage, UserProgress } from './types/messages';
+import type {
+  Course,
+  CourseListItem,
+  ExtensionMessage,
+  UserProgress,
+} from './types/messages';
 import { useVsCodeApi } from './hooks/useVsCodeApi';
 import CoursesPage from './components/Courses/CoursesPage';
 import CourseTab from './components/Courses/CourseTab';
@@ -11,7 +16,9 @@ export default function App() {
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
-  const [progress, setProgress] = useState<UserProgress>({ completedTasks: {} });
+  const [progress, setProgress] = useState<UserProgress>({
+    completedTasks: {},
+  });
   const [hasHydratedProgress, setHasHydratedProgress] = useState(false);
   const courseCache = useRef(new Map<string, Course>());
   const pendingCourseIdRef = useRef<string | null>(null);
@@ -21,7 +28,10 @@ export default function App() {
       setCourses(message.payload);
       setIsLoading(false);
     } else if (message.type === 'courseDetails') {
-      if (message.payload && message.payload.id === pendingCourseIdRef.current) {
+      if (
+        message.payload &&
+        message.payload.id === pendingCourseIdRef.current
+      ) {
         courseCache.current.set(message.payload.id, message.payload);
         setSelectedCourse(message.payload);
       }
@@ -29,8 +39,11 @@ export default function App() {
     } else if (message.type === 'ragError') {
       setIsLoading(false);
     } else if (message.type === 'progress') {
-      setProgress(prev => ({
-        completedTasks: { ...message.payload.completedTasks, ...prev.completedTasks },
+      setProgress((prev) => ({
+        completedTasks: {
+          ...message.payload.completedTasks,
+          ...prev.completedTasks,
+        },
       }));
       setHasHydratedProgress(true);
     }
@@ -45,30 +58,38 @@ export default function App() {
 
   // сохраняем прогресс в extension host
   useEffect(() => {
-    if (!hasHydratedProgress) { return }
-    postMessage({ type: 'saveProgress', payload: progress })
-  }, [progress, hasHydratedProgress, postMessage])
+    if (!hasHydratedProgress) {
+      return;
+    }
+    postMessage({ type: 'saveProgress', payload: progress });
+  }, [progress, hasHydratedProgress, postMessage]);
 
   const completeItem = useCallback((lessonId: string, itemId: string) => {
-    setProgress(prev => ({
-      completedTasks: { ...prev.completedTasks, [`${lessonId}:${itemId}`]: true }
-    }))
-  }, [])
+    setProgress((prev) => ({
+      completedTasks: {
+        ...prev.completedTasks,
+        [`${lessonId}:${itemId}`]: true,
+      },
+    }));
+  }, []);
 
-  const handleSelectCourse = useCallback((id: string) => {
-    pendingCourseIdRef.current = id;
-    const cached = courseCache.current.get(id);
-    if (cached) {
-      setSelectedCourse(cached);
-    } else {
-      setIsLoadingDetails(true);
-      postMessage({ type: 'getCourseDetails', payload: id });
-    }
-  }, [postMessage])
+  const handleSelectCourse = useCallback(
+    (id: string) => {
+      pendingCourseIdRef.current = id;
+      const cached = courseCache.current.get(id);
+      if (cached) {
+        setSelectedCourse(cached);
+      } else {
+        setIsLoadingDetails(true);
+        postMessage({ type: 'getCourseDetails', payload: id });
+      }
+    },
+    [postMessage],
+  );
 
   const handleBackToList = useCallback(() => {
     setSelectedCourse(null);
-  }, [])
+  }, []);
 
   if (isLoading || isLoadingDetails) {
     return (
@@ -79,7 +100,7 @@ export default function App() {
         </div>
         <RagAssistant />
       </>
-    )
+    );
   }
 
   return (

@@ -8,7 +8,7 @@ Action — это асинхронная функция, которая пере
 
 ```tsx
 async function submitAction(formData: FormData) {
-  await saveToDatabase(formData)
+  await saveToDatabase(formData);
 }
 ```
 
@@ -21,20 +21,20 @@ React 19 добавляет поддержку Actions в:
 ## Пример: форма с Action
 
 ```tsx
-import { useFormStatus } from 'react-dom'
+import { useFormStatus } from 'react-dom';
 
 function SubmitButton() {
-  const { pending } = useFormStatus()
+  const { pending } = useFormStatus();
 
   return (
     <button type="submit" disabled={pending}>
       {pending ? 'Сохранение...' : 'Сохранить'}
     </button>
-  )
+  );
 }
 
 function MyForm() {
-  const [error, submitAction] = useActionState(updateProfile, null)
+  const [error, submitAction] = useActionState(updateProfile, null);
 
   return (
     <form action={submitAction}>
@@ -42,7 +42,7 @@ function MyForm() {
       {error && <p className="error">{error}</p>}
       <SubmitButton />
     </form>
-  )
+  );
 }
 ```
 
@@ -54,8 +54,8 @@ function MyForm() {
 
 ## Сравнение с подходом до React 19
 
-| Задача | До React 19 | React 19 |
-|---|---|---|
-| Отправка формы | `onSubmit` + ручное управление `loading` | `<form action={action}>` + автоматический `pending` |
-| Обработка ошибок | `useState` для ошибок | `useActionState` для состояния формы |
-| Асинхронная логика | `useEffect` для побочных эффектов | Action как единое место для асинхронной логики |
+| Задача             | До React 19                              | React 19                                            |
+| ------------------ | ---------------------------------------- | --------------------------------------------------- |
+| Отправка формы     | `onSubmit` + ручное управление `loading` | `<form action={action}>` + автоматический `pending` |
+| Обработка ошибок   | `useState` для ошибок                    | `useActionState` для состояния формы                |
+| Асинхронная логика | `useEffect` для побочных эффектов        | Action как единое место для асинхронной логики      |

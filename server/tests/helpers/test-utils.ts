@@ -41,8 +41,10 @@ export function createMockFS() {
           }
         }
         names.sort((a, b) => a.name.localeCompare(b.name))
-        if (opts?.withFileTypes) { return names }
-        return names.map(n => n.name)
+        if (opts?.withFileTypes) {
+          return names
+        }
+        return names.map((n) => n.name)
       }),
       existsSync: vi.fn((path: string) => {
         const p = path.replace(/\\/g, '/')

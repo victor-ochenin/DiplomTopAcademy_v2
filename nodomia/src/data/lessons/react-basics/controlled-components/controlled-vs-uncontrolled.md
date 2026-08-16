@@ -6,13 +6,13 @@ React полностью управляет значением через state:
 
 ```tsx
 function ControlledInput() {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState('');
 
   function handleChange(e) {
-    setValue(e.target.value)
+    setValue(e.target.value);
   }
 
-  return <input value={value} onChange={handleChange} />
+  return <input value={value} onChange={handleChange} />;
 }
 ```
 
@@ -22,13 +22,13 @@ function ControlledInput() {
 
 ```tsx
 function UncontrolledInput() {
-  const inputRef = useRef(null)
+  const inputRef = useRef(null);
 
   function handleSubmit() {
-    console.log(inputRef.current.value)
+    console.log(inputRef.current.value);
   }
 
-  return <input ref={inputRef} defaultValue="начальное" />
+  return <input ref={inputRef} defaultValue="начальное" />;
 }
 ```
 

@@ -17,7 +17,9 @@ export function useRagState() {
   const restored = useRef(false);
 
   useEffect(() => {
-    if (restored.current) {return;}
+    if (restored.current) {
+      return;
+    }
     const saved = getState() as Partial<RagState> | undefined;
     if (saved) {
       setIsOpen(saved.isOpen ?? DEFAULT_STATE.isOpen);
@@ -26,12 +28,14 @@ export function useRagState() {
   }, [getState]);
 
   useEffect(() => {
-    if (!restored.current) {return;}
+    if (!restored.current) {
+      return;
+    }
     setState({ isOpen });
   }, [isOpen, setState]);
 
   const togglePanel = useCallback(() => {
-    setIsOpen(prev => !prev);
+    setIsOpen((prev) => !prev);
   }, []);
 
   const closePanel = useCallback(() => {

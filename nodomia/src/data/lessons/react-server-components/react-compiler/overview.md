@@ -14,19 +14,14 @@ function Profile({ user, bio }) {
       <h1>{user.name}</h1>
       <p>{bio}</p>
     </div>
-  )
+  );
 }
 
 // После компиляции (упрощённо)
 function Profile($) {
-  const t0 = $.memo(() => user.name)
-  const t1 = $.memo(() => bio)
-  return (
-    $.jsx('div', null,
-      $.jsx('h1', null, t0),
-      $.jsx('p', null, t1)
-    )
-  )
+  const t0 = $.memo(() => user.name);
+  const t1 = $.memo(() => bio);
+  return $.jsx('div', null, $.jsx('h1', null, t0), $.jsx('p', null, t1));
 }
 ```
 
@@ -34,9 +29,9 @@ function Profile($) {
 
 ```tsx
 // ❌ Всё это становится не нужно
-const memoizedValue = useMemo(() => expensive(a, b), [a, b])
-const memoizedCallback = useCallback(() => doSomething(a), [a])
-const MemoizedComponent = React.memo(Component)
+const memoizedValue = useMemo(() => expensive(a, b), [a, b]);
+const memoizedCallback = useCallback(() => doSomething(a), [a]);
+const MemoizedComponent = React.memo(Component);
 ```
 
 ## Настройка

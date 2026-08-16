@@ -14,16 +14,21 @@ interface CodingTask {
 }
 
 // собираем все реальные coding-задачи (на уровне модуля, до сбора тестов)
-const allCodingTasks: { lessonId: string; course: string; task: CodingTask }[] = []
+const allCodingTasks: { lessonId: string; course: string; task: CodingTask }[] =
+  []
 let courses: string[] = []
 
 try {
   courses = readdirSync(LESSONS_DIR, { withFileTypes: true })
-    .filter(d => d.isDirectory()).map(d => d.name)
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
 
   for (const course of courses) {
-    const lessonDirs = readdirSync(join(LESSONS_DIR, course), { withFileTypes: true })
-      .filter(d => d.isDirectory()).map(d => d.name)
+    const lessonDirs = readdirSync(join(LESSONS_DIR, course), {
+      withFileTypes: true,
+    })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name)
 
     for (const lessonId of lessonDirs) {
       const lessonPath = join(LESSONS_DIR, course, lessonId, 'lesson.json')
@@ -49,10 +54,18 @@ vi.mock('@langchain/core/prompts', () => ({
   ChatPromptTemplate: { fromMessages: vi.fn().mockReturnValue(mockRunnable) },
 }))
 
-vi.mock('@langchain/openai', () => ({ ChatOpenAI: vi.fn().mockImplementation(function() { return {} }) }))
-vi.mock('@langchain/core/output_parsers', () => ({ StringOutputParser: vi.fn().mockImplementation(function() { return {} }) }))
+vi.mock('@langchain/openai', () => ({
+  ChatOpenAI: vi.fn().mockImplementation(function () {
+    return {}
+  }),
+}))
+vi.mock('@langchain/core/output_parsers', () => ({
+  StringOutputParser: vi.fn().mockImplementation(function () {
+    return {}
+  }),
+}))
 
-let checkCode: typeof import('../../src/rag/query.js')['checkCode']
+let checkCode: (typeof import('../../src/rag/query.js'))['checkCode']
 
 async function getCheckCode() {
   if (!checkCode) {

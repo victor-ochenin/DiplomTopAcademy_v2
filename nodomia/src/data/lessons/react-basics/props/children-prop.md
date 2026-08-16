@@ -6,7 +6,7 @@
 
 ```tsx
 function Card({ children }) {
-  return <div className="card">{children}</div>
+  return <div className="card">{children}</div>;
 }
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
       <h2>Заголовок</h2>
       <p>Этот контент попадёт в children</p>
     </Card>
-  )
+  );
 }
 ```
 
@@ -31,6 +31,6 @@ function Layout({ header, children, footer }) {
       <main>{children}</main>
       <footer>{footer}</footer>
     </div>
-  )
+  );
 }
 ```

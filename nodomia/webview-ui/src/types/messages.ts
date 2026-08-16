@@ -5,4 +5,11 @@ export type {
   WebviewMessage,
   ExtensionMessage,
 } from '../../../src/protocol';
-export type { Course, CourseListItem, Lesson, Document, Task, Resource } from '../../../src/types';
+export type {
+  Course,
+  CourseListItem,
+  Lesson,
+  Document,
+  Task,
+  Resource,
+} from '../../../src/types';

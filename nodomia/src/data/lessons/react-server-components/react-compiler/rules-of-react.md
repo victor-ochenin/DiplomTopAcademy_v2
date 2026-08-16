@@ -7,14 +7,14 @@ React Compiler полагается на **Правила React** — набор
 ```tsx
 // ✅ Чисто
 function Welcome({ name }: { name: string }) {
-  return <h1>Привет, {name}</h1>
+  return <h1>Привет, {name}</h1>;
 }
 
 // ❌ Нечисто — мутация внешней переменной
-let count = 0
+let count = 0;
 function BadCounter() {
-  count++
-  return <p>{count}</p>
+  count++;
+  return <p>{count}</p>;
 }
 ```
 
@@ -26,13 +26,13 @@ function BadCounter() {
 // ❌ Нарушение — хук под условием
 function Profile({ user }) {
   if (user) {
-    const [name, setName] = useState(user.name)
+    const [name, setName] = useState(user.name);
   }
 }
 
 // ✅ Правильно
 function Profile({ user }) {
-  const [name, setName] = useState(user?.name ?? '')
+  const [name, setName] = useState(user?.name ?? '');
 }
 ```
 
@@ -41,14 +41,14 @@ function Profile({ user }) {
 ```tsx
 // ❌ Нельзя
 function TodoList() {
-  const [todos, setTodos] = useState([])
-  todos.push(newTodo) // мутация
+  const [todos, setTodos] = useState([]);
+  todos.push(newTodo); // мутация
 }
 
 // ✅ Можно
 function TodoList() {
-  const [todos, setTodos] = useState([])
-  setTodos([...todos, newTodo])
+  const [todos, setTodos] = useState([]);
+  setTodos([...todos, newTodo]);
 }
 ```
 
@@ -57,12 +57,12 @@ function TodoList() {
 ```tsx
 // ❌ Нельзя
 function Child({ items }: { items: string[] }) {
-  items.push('new') // мутация пропса
+  items.push('new'); // мутация пропса
 }
 
 // ✅ Правильно
 function Child({ items }: { items: string[] }) {
-  const newItems = [...items, 'new']
+  const newItems = [...items, 'new'];
 }
 ```
 
@@ -71,14 +71,14 @@ function Child({ items }: { items: string[] }) {
 ```tsx
 // ✅ Правильно
 useEffect(() => {
-  const sub = source.subscribe(callback)
-  return () => sub.unsubscribe()
-}, [source])
+  const sub = source.subscribe(callback);
+  return () => sub.unsubscribe();
+}, [source]);
 
 // ❌ Неправильно — данные загружаются в useEffect
 useEffect(() => {
-  fetch('/api/data').then(setData)
-}, [])
+  fetch('/api/data').then(setData);
+}, []);
 ```
 
 ## Почему это важно

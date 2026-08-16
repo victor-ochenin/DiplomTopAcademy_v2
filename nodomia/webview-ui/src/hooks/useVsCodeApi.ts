@@ -41,16 +41,22 @@ export function useVsCodeApi(onMessage?: (message: ExtensionMessage) => void) {
   }, [onMessage]);
 
   return {
-    postMessage: useCallback((message: WebviewMessage) => {
-      vscode.postMessage(message);
-    }, [vscode]),
-    
+    postMessage: useCallback(
+      (message: WebviewMessage) => {
+        vscode.postMessage(message);
+      },
+      [vscode],
+    ),
+
     getState: useCallback(() => {
       return vscode.getState();
     }, [vscode]),
 
-    setState: useCallback((state: Record<string, unknown>) => {
-      vscode.setState(state);
-    }, [vscode]),
+    setState: useCallback(
+      (state: Record<string, unknown>) => {
+        vscode.setState(state);
+      },
+      [vscode],
+    ),
   };
 }

@@ -5,29 +5,39 @@ Compound Components — паттерн, где группа компоненто
 ## Пример: Select
 
 ```tsx
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState } from 'react';
 
 interface SelectContextType {
-  value: string
-  onChange: (value: string) => void
+  value: string;
+  onChange: (value: string) => void;
 }
 
-const SelectContext = createContext<SelectContextType | null>(null)
+const SelectContext = createContext<SelectContextType | null>(null);
 
-function Select({ value, onChange, children }: {
-  value: string
-  onChange: (value: string) => void
-  children: React.ReactNode
+function Select({
+  value,
+  onChange,
+  children,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  children: React.ReactNode;
 }) {
   return (
     <SelectContext.Provider value={{ value, onChange }}>
       <div className="select">{children}</div>
     </SelectContext.Provider>
-  )
+  );
 }
 
-function Option({ value, children }: { value: string; children: React.ReactNode }) {
-  const ctx = useContext(SelectContext)!
+function Option({
+  value,
+  children,
+}: {
+  value: string;
+  children: React.ReactNode;
+}) {
+  const ctx = useContext(SelectContext)!;
   return (
     <div
       className={`option ${ctx.value === value ? 'selected' : ''}`}
@@ -35,24 +45,24 @@ function Option({ value, children }: { value: string; children: React.ReactNode 
     >
       {children}
     </div>
-  )
+  );
 }
 
-Select.Option = Option
+Select.Option = Option;
 ```
 
 ## Использование
 
 ```tsx
 function LanguagePicker() {
-  const [lang, setLang] = useState('ru')
+  const [lang, setLang] = useState('ru');
   return (
     <Select value={lang} onChange={setLang}>
       <Select.Option value="ru">Русский</Select.Option>
       <Select.Option value="en">English</Select.Option>
       <Select.Option value="de">Deutsch</Select.Option>
     </Select>
-  )
+  );
 }
 ```
 

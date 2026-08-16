@@ -6,7 +6,7 @@ Props (properties) — это способ передачи данных от р
 
 ```tsx
 function App() {
-  return <User name="Иван" age={25} isAdmin={true} />
+  return <User name="Иван" age={25} isAdmin={true} />;
 }
 ```
 
@@ -21,7 +21,7 @@ function User(props) {
       <p>Имя: {props.name}</p>
       <p>Возраст: {props.age}</p>
     </div>
-  )
+  );
 }
 ```
 
@@ -31,7 +31,7 @@ React запрещает изменять props внутри компонент�
 
 ```tsx
 function User(props) {
-  props.name = 'Пётр' // ❌ Ошибка!
-  return <p>{props.name}</p>
+  props.name = 'Пётр'; // ❌ Ошибка!
+  return <p>{props.name}</p>;
 }
 ```

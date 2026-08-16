@@ -42,11 +42,7 @@
       "id": "task-24",
       "type": "open",
       "question": "Какой атрибут input используется для связывания с React-состоянием без контроля со стороны React?",
-      "acceptableAnswers": [
-        "defaultValue",
-        "default value",
-        "defaultvalue"
-      ]
+      "acceptableAnswers": ["defaultValue", "default value", "defaultvalue"]
     },
     {
       "id": "controlled-input",

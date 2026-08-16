@@ -5,11 +5,11 @@ Server Functions — функции, которые выполняются **н�
 ## Директива 'use server'
 
 ```tsx
-'use server'
+'use server';
 
 export async function createPost(formData: FormData) {
-  const title = formData.get('title')
-  await db.query('INSERT INTO posts (title) VALUES ($1)', [title])
+  const title = formData.get('title');
+  await db.query('INSERT INTO posts (title) VALUES ($1)', [title]);
 }
 ```
 
@@ -18,7 +18,7 @@ export async function createPost(formData: FormData) {
 ### В серверном компоненте — передача action в форму:
 
 ```tsx
-import { createPost } from './actions'
+import { createPost } from './actions';
 
 function NewPostPage() {
   return (
@@ -26,22 +26,25 @@ function NewPostPage() {
       <input name="title" required />
       <button type="submit">Создать</button>
     </form>
-  )
+  );
 }
 ```
 
 ### В клиентском компоненте — инлайн-функция:
 
 ```tsx
-'use client'
+'use client';
 
 function NewPostForm() {
   const createPost = async (formData: FormData) => {
-    'use server'
-    await db.query('INSERT INTO posts (title) VALUES ($1)', formData.get('title'))
-  }
+    'use server';
+    await db.query(
+      'INSERT INTO posts (title) VALUES ($1)',
+      formData.get('title'),
+    );
+  };
 
-  return <form action={createPost}>{/* ... */}</form>
+  return <form action={createPost}>{/* ... */}</form>;
 }
 ```
 
@@ -55,14 +58,17 @@ function NewPostForm() {
 ## Возвращаемое значение
 
 ```tsx
-'use server'
+'use server';
 
-export async function addTodo(prev: Todo[], formData: FormData): Promise<Todo[]> {
-  const text = formData.get('text') as string
-  await db.query('INSERT INTO todos (text) VALUES ($1)', [text])
-  return [...prev, { id: Date.now(), text, done: false }]
+export async function addTodo(
+  prev: Todo[],
+  formData: FormData,
+): Promise<Todo[]> {
+  const text = formData.get('text') as string;
+  await db.query('INSERT INTO todos (text) VALUES ($1)', [text]);
+  return [...prev, { id: Date.now(), text, done: false }];
 }
 
 // использование с useActionState
-const [todos, formAction] = useActionState(addTodo, [])
+const [todos, formAction] = useActionState(addTodo, []);
 ```

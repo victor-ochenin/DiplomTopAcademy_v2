@@ -16,7 +16,9 @@ export function validateData(basePath: string): ValidationError[] {
     return [{ file: coursesDir, message: 'courses dir not found' }];
   }
 
-  const courseFiles = readdirSync(coursesDir).filter((f) => f.endsWith('.json'));
+  const courseFiles = readdirSync(coursesDir).filter((f) =>
+    f.endsWith('.json'),
+  );
   const seenCourseIds = new Set<string>();
 
   for (const file of courseFiles) {
@@ -40,7 +42,12 @@ export function validateData(basePath: string): ValidationError[] {
         errors.push({ file, message: `lesson file not found: ${ref}` });
         continue;
       }
-      validateLesson(readJson(lessonPath, errors), lessonPath, basePath, errors);
+      validateLesson(
+        readJson(lessonPath, errors),
+        lessonPath,
+        basePath,
+        errors,
+      );
     }
   }
   return errors;
@@ -50,12 +57,20 @@ function readJson(filePath: string, errors: ValidationError[]): unknown {
   try {
     return JSON.parse(readFileSync(filePath, 'utf-8'));
   } catch (err) {
-    errors.push({ file: filePath, message: `invalid JSON: ${(err as Error).message}` });
+    errors.push({
+      file: filePath,
+      message: `invalid JSON: ${(err as Error).message}`,
+    });
     return null;
   }
 }
 
-function validateLesson(raw: unknown, lessonPath: string, basePath: string, errors: ValidationError[]) {
+function validateLesson(
+  raw: unknown,
+  lessonPath: string,
+  basePath: string,
+  errors: ValidationError[],
+) {
   const lesson = LessonFileSchema.safeParse(raw);
   if (!lesson.success) {
     for (const issue of lesson.error.issues) {
@@ -67,7 +82,10 @@ function validateLesson(raw: unknown, lessonPath: string, basePath: string, erro
 
   const folderName = basename(dirname(lessonPath));
   if (lesson.data.id !== folderName) {
-    errors.push({ file, message: `lesson id "${lesson.data.id}" != folder name "${folderName}"` });
+    errors.push({
+      file,
+      message: `lesson id "${lesson.data.id}" != folder name "${folderName}"`,
+    });
   }
 
   for (const doc of lesson.data.documents) {
@@ -86,7 +104,10 @@ function validateLesson(raw: unknown, lessonPath: string, basePath: string, erro
   }
 }
 
-if (process.argv[1] && pathToFileURL(__filename).href === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1] &&
+  pathToFileURL(__filename).href === pathToFileURL(process.argv[1]).href
+) {
   const base = process.argv[2] ?? process.cwd();
   const errors = validateData(base);
   if (errors.length) {

@@ -36,10 +36,10 @@ features/
 
 ## Именование
 
-| Элемент | Стиль | Пример |
-|---------|-------|--------|
-| Компонент | PascalCase | `UserCard.tsx` |
-| Хук | camelCase, use-префикс | `useAuth.ts` |
-| Утилита | camelCase | `formatDate.ts` |
-| Тип/интерфейс | PascalCase | `User.ts` |
-| CSS-модуль | kebab-case | `user-card.module.css` |
+| Элемент       | Стиль                  | Пример                 |
+| ------------- | ---------------------- | ---------------------- |
+| Компонент     | PascalCase             | `UserCard.tsx`         |
+| Хук           | camelCase, use-префикс | `useAuth.ts`           |
+| Утилита       | camelCase              | `formatDate.ts`        |
+| Тип/интерфейс | PascalCase             | `User.ts`              |
+| CSS-модуль    | kebab-case             | `user-card.module.css` |

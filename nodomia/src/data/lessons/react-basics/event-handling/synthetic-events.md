@@ -8,10 +8,10 @@ React использует синтетические события (SyntheticE
 function InputField() {
   function handleChange(e) {
     // e — это SyntheticEvent
-    console.log(e.target.value)
+    console.log(e.target.value);
   }
 
-  return <input onChange={handleChange} />
+  return <input onChange={handleChange} />;
 }
 ```
 
@@ -27,6 +27,6 @@ function InputField() {
 
 ```tsx
 function handleChange(e) {
-  const value = e.target.value // работает всегда
+  const value = e.target.value; // работает всегда
 }
 ```

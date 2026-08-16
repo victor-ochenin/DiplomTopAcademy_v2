@@ -7,11 +7,15 @@
 ```tsx
 // ❌ Смешанные ответственности
 function UserProfile({ userId }: { userId: number }) {
-  const [user, setUser] = useState(null)
-  useEffect(() => { fetchUser(userId).then(setUser) }, [userId])
-  const [posts, setPosts] = useState([])
-  useEffect(() => { fetchPosts(userId).then(setPosts) }, [userId])
-  return <div>{/* user + posts */}</div>
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    fetchUser(userId).then(setUser);
+  }, [userId]);
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    fetchPosts(userId).then(setPosts);
+  }, [userId]);
+  return <div>{/* user + posts */}</div>;
 }
 
 // ✅ Разделено
@@ -21,7 +25,7 @@ function UserProfile({ userId }: { userId: number }) {
       <UserInfo userId={userId} />
       <UserPosts userId={userId} />
     </div>
-  )
+  );
 }
 ```
 
@@ -29,17 +33,15 @@ function UserProfile({ userId }: { userId: number }) {
 
 ```tsx
 // ❌ Наследование через HOC
-const Enhanced = withAuth(withLogger(withTheme(Component)))
+const Enhanced = withAuth(withLogger(withTheme(Component)));
 
 // ✅ Композиция через children
 function Layout({ children }: { children: ReactNode }) {
   return (
     <AuthProvider>
-      <ThemeProvider>
-        {children}
-      </ThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     </AuthProvider>
-  )
+  );
 }
 ```
 
@@ -49,16 +51,16 @@ function Layout({ children }: { children: ReactNode }) {
 // ❌ Мутация
 function TodoItem({ todo, onUpdate }) {
   const handleToggle = () => {
-    todo.done = !todo.done    // мутация исходного объекта
-    onUpdate(todo)
-  }
+    todo.done = !todo.done; // мутация исходного объекта
+    onUpdate(todo);
+  };
 }
 
 // ✅ Копирование
 function TodoItem({ todo, onUpdate }) {
   const handleToggle = () => {
-    onUpdate({ ...todo, done: !todo.done })
-  }
+    onUpdate({ ...todo, done: !todo.done });
+  };
 }
 ```
 

@@ -6,13 +6,13 @@
 
 ```tsx
 async function searchAction(formData: FormData) {
-  const query = formData.get('query')
-  const results = await searchDatabase(query)
-  return results
+  const query = formData.get('query');
+  const results = await searchDatabase(query);
+  return results;
 }
 
 function SearchForm() {
-  const [results, formAction, isPending] = useActionState(searchAction, [])
+  const [results, formAction, isPending] = useActionState(searchAction, []);
 
   return (
     <>
@@ -24,12 +24,12 @@ function SearchForm() {
       {isPending && <p>Загрузка...</p>}
 
       <ul>
-        {results.map(item => (
+        {results.map((item) => (
           <li key={item.id}>{item.title}</li>
         ))}
       </ul>
     </>
-  )
+  );
 }
 ```
 
@@ -37,11 +37,11 @@ function SearchForm() {
 
 ## Преимущества
 
-| Сценарий | Без JS | С JS |
-|---|---|---|
-| Отправка формы | Браузером по URL | Перехватывается React |
-| Обновление страницы | Полная перезагрузка | Асинхронное, без перезагрузки |
-| Результат | Сервер возвращает HTML | Action возвращает данные, UI обновляется точечно |
+| Сценарий            | Без JS                 | С JS                                             |
+| ------------------- | ---------------------- | ------------------------------------------------ |
+| Отправка формы      | Браузером по URL       | Перехватывается React                            |
+| Обновление страницы | Полная перезагрузка    | Асинхронное, без перезагрузки                    |
+| Результат           | Сервер возвращает HTML | Action возвращает данные, UI обновляется точечно |
 
 ## Атрибут action и пропс action
 
@@ -54,7 +54,7 @@ React 19 позволяет комбинировать оба подхода: е
 
 ```tsx
 function OrderForm() {
-  const [state, formAction] = useActionState(processOrder, null)
+  const [state, formAction] = useActionState(processOrder, null);
 
   return (
     <form action={formAction}>
@@ -67,7 +67,7 @@ function OrderForm() {
         Отправить заказ
       </button>
     </form>
-  )
+  );
 }
 ```
 

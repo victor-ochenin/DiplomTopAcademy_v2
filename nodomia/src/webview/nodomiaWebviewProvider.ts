@@ -5,9 +5,7 @@ import { WebviewMessageSchema, type WebviewMessage } from '../protocol';
 import { loadCourseListAsync, loadCourseDetailsAsync } from '../data/courses';
 
 export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
-  constructor(
-    private readonly context: vscode.ExtensionContext,
-  ) {}
+  constructor(private readonly context: vscode.ExtensionContext) {}
 
   async resolveWebviewView(webviewView: vscode.WebviewView) {
     try {
@@ -30,7 +28,10 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(async (message) => {
       const parsed = WebviewMessageSchema.safeParse(message);
       if (!parsed.success) {
-        console.warn('Nodomia: invalid message from webview', parsed.error.issues);
+        console.warn(
+          'Nodomia: invalid message from webview',
+          parsed.error.issues,
+        );
         return;
       }
       try {
@@ -43,7 +44,7 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
 
   private async handleMessage(
     message: WebviewMessage,
-    webviewView: vscode.WebviewView
+    webviewView: vscode.WebviewView,
   ) {
     switch (message.type) {
       case 'ready':
@@ -56,15 +57,21 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
       }
 
       case 'saveProgress': {
-        await this.context.globalState.update('nodomia.progress', message.payload);
+        await this.context.globalState.update(
+          'nodomia.progress',
+          message.payload,
+        );
         break;
       }
-      
+
       // Запрос списка курсов для инициализации UI
       case 'getCourses': {
         try {
           const courses = await loadCourseListAsync();
-          webviewView.webview.postMessage({ type: 'courses', payload: courses });
+          webviewView.webview.postMessage({
+            type: 'courses',
+            payload: courses,
+          });
         } catch (err) {
           console.error('Nodomia: failed to load courses', err);
           webviewView.webview.postMessage({ type: 'courses', payload: [] });
@@ -75,10 +82,16 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
       case 'getCourseDetails': {
         try {
           const course = await loadCourseDetailsAsync(message.payload);
-          webviewView.webview.postMessage({ type: 'courseDetails', payload: course });
+          webviewView.webview.postMessage({
+            type: 'courseDetails',
+            payload: course,
+          });
         } catch (err) {
           console.error('Nodomia: failed to load course details', err);
-          webviewView.webview.postMessage({ type: 'courseDetails', payload: null });
+          webviewView.webview.postMessage({
+            type: 'courseDetails',
+            payload: null,
+          });
         }
         break;
       }
@@ -88,11 +101,21 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
           const res = await fetch('http://localhost:3001/api/query', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: message.payload.question, history: message.payload.history, requestId: message.payload.requestId }),
+            body: JSON.stringify({
+              question: message.payload.question,
+              history: message.payload.history,
+              requestId: message.payload.requestId,
+            }),
           });
-          if (!res.ok) { throw new Error(`Server error: ${res.status}`); }
-          const data = await res.json() as { answer: string };
-          webviewView.webview.postMessage({ type: 'answer', requestId: message.payload.requestId, payload: data.answer });
+          if (!res.ok) {
+            throw new Error(`Server error: ${res.status}`);
+          }
+          const data = (await res.json()) as { answer: string };
+          webviewView.webview.postMessage({
+            type: 'answer',
+            requestId: message.payload.requestId,
+            payload: data.answer,
+          });
         } catch (err) {
           webviewView.webview.postMessage({
             type: 'ragError',
@@ -105,24 +128,38 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
 
       case 'checkCode': {
         try {
-          const { taskId, lessonId, filePath, kind, expectedFiles } = message.payload;
+          const { taskId, lessonId, filePath, kind, expectedFiles } =
+            message.payload;
           const workspaceFolders = vscode.workspace.workspaceFolders;
-          if (!workspaceFolders) { throw new Error('No workspace open'); }
+          if (!workspaceFolders) {
+            throw new Error('No workspace open');
+          }
 
           let code: string;
           if (kind === 'project' && expectedFiles?.length) {
             code = '';
             for (const f of expectedFiles) {
               const pattern = '**/' + f.replace(/\\/g, '/');
-              const uris = await vscode.workspace.findFiles(pattern, '**/node_modules/**', 1);
+              const uris = await vscode.workspace.findFiles(
+                pattern,
+                '**/node_modules/**',
+                1,
+              );
               if (uris.length > 0) {
                 const bytes = await vscode.workspace.fs.readFile(uris[0]);
                 code += `--- ${f} ---\n${new TextDecoder().decode(bytes)}\n\n`;
               }
             }
-            if (!code) { throw new Error('Не найдены файлы проекта. Убедитесь, что вы создали проект.'); }
+            if (!code) {
+              throw new Error(
+                'Не найдены файлы проекта. Убедитесь, что вы создали проект.',
+              );
+            }
           } else {
-            const fullPath = vscode.Uri.joinPath(workspaceFolders[0].uri, filePath);
+            const fullPath = vscode.Uri.joinPath(
+              workspaceFolders[0].uri,
+              filePath,
+            );
             const bytes = await vscode.workspace.fs.readFile(fullPath);
             code = new TextDecoder().decode(bytes);
           }
@@ -132,9 +169,14 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ taskId, lessonId, code, kind }),
           });
-          if (!res.ok) { throw new Error(`Server error: ${res.status}`); }
+          if (!res.ok) {
+            throw new Error(`Server error: ${res.status}`);
+          }
           const result = await res.json();
-          webviewView.webview.postMessage({ type: 'checkResult', payload: result });
+          webviewView.webview.postMessage({
+            type: 'checkResult',
+            payload: result,
+          });
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'Unknown error';
           const isServerDown = err instanceof TypeError;
@@ -152,17 +194,31 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
       }
 
       default:
-        console.warn(`Nodomia: unknown message type: ${(message as any)?.type}`);
+        console.warn(
+          `Nodomia: unknown message type: ${(message as any)?.type}`,
+        );
     }
   }
 
-  private async getProgress(): Promise<{ completedTasks: Record<string, boolean> }> {
+  private async getProgress(): Promise<{
+    completedTasks: Record<string, boolean>;
+  }> {
     const empty = { completedTasks: {} };
-    const global = this.context.globalState.get<{ completedTasks: Record<string, boolean> }>('nodomia.progress');
-    if (global) { return global; }
+    const global = this.context.globalState.get<{
+      completedTasks: Record<string, boolean>;
+    }>('nodomia.progress');
+    if (global) {
+      return global;
+    }
 
-    const legacy = this.context.workspaceState.get<{ completedTasks: Record<string, boolean> }>('nodomia.progress');
-    if (legacy && legacy.completedTasks && Object.keys(legacy.completedTasks).length > 0) {
+    const legacy = this.context.workspaceState.get<{
+      completedTasks: Record<string, boolean>;
+    }>('nodomia.progress');
+    if (
+      legacy &&
+      legacy.completedTasks &&
+      Object.keys(legacy.completedTasks).length > 0
+    ) {
       await this.context.globalState.update('nodomia.progress', legacy);
       await this.context.workspaceState.update('nodomia.progress', undefined);
       return legacy;
@@ -172,17 +228,31 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
 
   private async getHtmlContent(webview: vscode.Webview): Promise<string> {
     try {
-      const htmlPath = path.join(this.context.extensionUri.fsPath, 'webview-ui', 'index.html');
+      const htmlPath = path.join(
+        this.context.extensionUri.fsPath,
+        'webview-ui',
+        'index.html',
+      );
       const html = await fs.promises.readFile(htmlPath, 'utf-8');
-      
+
       // asWebviewUri Преобразует локальный `file://` URI в специальный URI, который VS Code может загружать внутри WebView.
       const mainJsUri = webview.asWebviewUri(
-        vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'webview', 'main.js')
+        vscode.Uri.joinPath(
+          this.context.extensionUri,
+          'dist',
+          'webview',
+          'main.js',
+        ),
       );
       const mainCssUri = webview.asWebviewUri(
-        vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'webview', 'main.css')
+        vscode.Uri.joinPath(
+          this.context.extensionUri,
+          'dist',
+          'webview',
+          'main.css',
+        ),
       );
-      
+
       // Подставляем плейсхолдеры
       return html
         .replaceAll('{{mainJsUri}}', mainJsUri.toString())

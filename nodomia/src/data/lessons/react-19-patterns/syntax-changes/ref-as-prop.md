@@ -5,11 +5,11 @@
 ## До React 19
 
 ```tsx
-import { forwardRef } from 'react'
+import { forwardRef } from 'react';
 
 const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
-  return <input ref={ref} {...props} />
-})
+  return <input ref={ref} {...props} />;
+});
 ```
 
 ## React 19
@@ -17,12 +17,12 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
 ```tsx
 function Input(props: Props) {
   // ref доступен как props.ref
-  return <input ref={props.ref} {...props} />
+  return <input ref={props.ref} {...props} />;
 }
 
 // или через деструктуризацию:
 function Input({ ref, ...props }: Props) {
-  return <input ref={ref} {...props} />
+  return <input ref={ref} {...props} />;
 }
 ```
 

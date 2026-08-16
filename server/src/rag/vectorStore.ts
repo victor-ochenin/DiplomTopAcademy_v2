@@ -1,6 +1,12 @@
 import { ChromaClient } from 'chromadb'
 import { createHash } from 'node:crypto'
-import { readFileSync, readdirSync, mkdirSync, writeFileSync, existsSync } from 'node:fs'
+import {
+  readFileSync,
+  readdirSync,
+  mkdirSync,
+  writeFileSync,
+  existsSync,
+} from 'node:fs'
 import { join, dirname, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { OpenRouterEmbeddingFunction } from './embeddings.js'
@@ -22,8 +28,10 @@ export interface DocumentResult {
   metadata: Record<string, string>
 }
 
-let queryCollection: ((text: string, k?: number) => Promise<DocumentResult[]>) | null = null
-let webQueryCollection: ((text: string, k?: number) => Promise<DocumentResult[]>) | null = null
+let queryCollection:
+  ((text: string, k?: number) => Promise<DocumentResult[]>) | null = null
+let webQueryCollection:
+  ((text: string, k?: number) => Promise<DocumentResult[]>) | null = null
 
 // Вычисляет SHA-256 хэш от всех lesson.json и .md файлов в LESSONS_DIR.
 export function computeChecksum(): string {
@@ -34,7 +42,8 @@ export function computeChecksum(): string {
     for (const entry of entries.sort()) {
       const full = join(dir, entry.name)
       if (entry.isDirectory()) walk(full)
-      else if (entry.name === 'lesson.json' || entry.name.endsWith('.md')) files.push(full)
+      else if (entry.name === 'lesson.json' || entry.name.endsWith('.md'))
+        files.push(full)
     }
   }
   walk(LESSONS_DIR)
@@ -48,9 +57,9 @@ function computeWebChecksum(): string {
   if (!existsSync(WEB_SOURCES_DIR)) return ''
 
   const files = readdirSync(WEB_SOURCES_DIR)
-    .filter(f => f.endsWith('.json'))
+    .filter((f) => f.endsWith('.json'))
     .sort()
-    .map(f => join(WEB_SOURCES_DIR, f))
+    .map((f) => join(WEB_SOURCES_DIR, f))
 
   if (files.length === 0) return ''
 
@@ -62,8 +71,16 @@ function computeWebChecksum(): string {
 // Загружает все документы курса из LESSONS_DIR.
 // Читает lesson.json → contentFile → содержимое .md файла.
 // Возвращает массив { id, content, metadata } для индексации в ChromaDB.
-export function loadDocuments(): { id: string; content: string; metadata: Record<string, string> }[] {
-  const results: { id: string; content: string; metadata: Record<string, string> }[] = []
+export function loadDocuments(): {
+  id: string
+  content: string
+  metadata: Record<string, string>
+}[] {
+  const results: {
+    id: string
+    content: string
+    metadata: Record<string, string>
+  }[] = []
 
   if (!existsSync(LESSONS_DIR)) {
     console.warn(`Nodomia RAG: lessons dir not found at ${LESSONS_DIR}`)
@@ -81,7 +98,10 @@ export function loadDocuments(): { id: string; content: string; metadata: Record
 
     for (const entry of entries) {
       const full = join(dir, entry.name)
-      if (entry.isDirectory()) { walkDir(full); continue }
+      if (entry.isDirectory()) {
+        walkDir(full)
+        continue
+      }
       if (entry.name !== 'lesson.json') continue
 
       let raw: string
@@ -92,7 +112,10 @@ export function loadDocuments(): { id: string; content: string; metadata: Record
         continue
       }
 
-      let data: { id?: string; documents?: { id?: string; title?: string; contentFile?: string }[] }
+      let data: {
+        id?: string
+        documents?: { id?: string; title?: string; contentFile?: string }[]
+      }
       try {
         data = JSON.parse(raw)
       } catch (err) {
@@ -104,14 +127,20 @@ export function loadDocuments(): { id: string; content: string; metadata: Record
       const lessonDir = dirname(full)
 
       for (const doc of data.documents ?? []) {
-        if (typeof doc?.contentFile !== 'string' || !doc.contentFile.endsWith('.md')) continue
+        if (
+          typeof doc?.contentFile !== 'string' ||
+          !doc.contentFile.endsWith('.md')
+        )
+          continue
 
         const mdPath = join(lessonDir, basename(doc.contentFile))
         let mdContent: string
         try {
           mdContent = readFileSync(mdPath, 'utf-8')
         } catch {
-          console.warn(`Nodomia RAG: .md not found for ${doc.id ?? '?'} in ${full}`)
+          console.warn(
+            `Nodomia RAG: .md not found for ${doc.id ?? '?'} in ${full}`,
+          )
           continue
         }
 
@@ -136,8 +165,14 @@ async function ensureCollection(
   name: string,
   checksumFile: string,
   computeFn: () => string,
-  loadData: () => Promise<{ id: string; content: string; metadata: Record<string, string> }[]> | { id: string; content: string; metadata: Record<string, string> }[],
-  setQueryFn: (fn: (text: string, k?: number) => Promise<DocumentResult[]>) => void,
+  loadData: () =>
+    | Promise<
+        { id: string; content: string; metadata: Record<string, string> }[]
+      >
+    | { id: string; content: string; metadata: Record<string, string> }[],
+  setQueryFn: (
+    fn: (text: string, k?: number) => Promise<DocumentResult[]>,
+  ) => void,
 ): Promise<void> {
   mkdirSync(CHROMA_DATA_DIR, { recursive: true })
 
@@ -149,12 +184,24 @@ async function ensureCollection(
 
   const current = computeFn()
   let prev = ''
-  try { prev = readFileSync(checksumFile, 'utf-8').trim() } catch { /* not exist */ }
+  try {
+    prev = readFileSync(checksumFile, 'utf-8').trim()
+  } catch {
+    /* not exist */
+  }
 
   if (current && current !== prev) {
-    try { await client.deleteCollection({ name }) } catch { /* not exist */ }
+    try {
+      await client.deleteCollection({ name })
+    } catch {
+      /* not exist */
+    }
 
-    const collection = await client.createCollection({ name, embeddingFunction: embedder, metadata: { 'hnsw:space': 'cosine' } })
+    const collection = await client.createCollection({
+      name,
+      embeddingFunction: embedder,
+      metadata: { 'hnsw:space': 'cosine' },
+    })
     const docs = await loadData()
 
     if (docs.length > 0) {
@@ -162,9 +209,9 @@ async function ensureCollection(
       for (let i = 0; i < docs.length; i += batchSize) {
         const batch = docs.slice(i, i + batchSize)
         await collection.add({
-          ids: batch.map(d => d.id),
-          documents: batch.map(d => d.content),
-          metadatas: batch.map(d => d.metadata),
+          ids: batch.map((d) => d.id),
+          documents: batch.map((d) => d.content),
+          metadatas: batch.map((d) => d.metadata),
         })
       }
       console.log(`Indexed ${docs.length} documents into ${name}`)
@@ -174,7 +221,10 @@ async function ensureCollection(
   }
 
   setQueryFn(async (text: string, k = 3) => {
-    const collection = await client.getCollection({ name, embeddingFunction: embedder })
+    const collection = await client.getCollection({
+      name,
+      embeddingFunction: embedder,
+    })
     const r = await collection.query({ queryTexts: [text], nResults: k })
     return (r.documents?.[0] ?? []).map((content, i) => ({
       pageContent: content,
@@ -191,28 +241,54 @@ export async function testChromaConnection(): Promise<void> {
 }
 
 export async function ensureIndex(): Promise<void> {
-  await ensureCollection(COLLECTION_NAME, CHECKSUM_FILE, computeChecksum, loadDocuments, (fn) => { queryCollection = fn })
+  await ensureCollection(
+    COLLECTION_NAME,
+    CHECKSUM_FILE,
+    computeChecksum,
+    loadDocuments,
+    (fn) => {
+      queryCollection = fn
+    },
+  )
 }
 
 export async function ensureWebIndex(): Promise<void> {
   const loadWebData = async () => {
     const { loadWebSources, scrapeUrls } = await import('./webFetcher.js')
     const sources = loadWebSources(WEB_SOURCES_DIR)
-    if (sources.length === 0) { return [] }
+    if (sources.length === 0) {
+      return []
+    }
     return scrapeUrls(sources)
   }
-  await ensureCollection(WEB_COLLECTION, WEB_CHECKSUM_FILE, computeWebChecksum, loadWebData, (fn) => { webQueryCollection = fn })
+  await ensureCollection(
+    WEB_COLLECTION,
+    WEB_CHECKSUM_FILE,
+    computeWebChecksum,
+    loadWebData,
+    (fn) => {
+      webQueryCollection = fn
+    },
+  )
 }
 
 // Возвращает функцию поиска по документам курсов. Должна вызываться после ensureIndex().
-export function getQueryFn(): (text: string, k?: number) => Promise<DocumentResult[]> {
-  if (!queryCollection) throw new Error('ChromaDB not initialized. Call ensureIndex() first.')
+export function getQueryFn(): (
+  text: string,
+  k?: number,
+) => Promise<DocumentResult[]> {
+  if (!queryCollection)
+    throw new Error('ChromaDB not initialized. Call ensureIndex() first.')
   return queryCollection
 }
 
 // Возвращает функцию поиска по веб-источникам. Должна вызываться после ensureWebIndex().
-export function getWebQueryFn(): (text: string, k?: number) => Promise<DocumentResult[]> {
-  if (!webQueryCollection) throw new Error('Web docs not initialized. Call ensureWebIndex() first.')
+export function getWebQueryFn(): (
+  text: string,
+  k?: number,
+) => Promise<DocumentResult[]> {
+  if (!webQueryCollection)
+    throw new Error('Web docs not initialized. Call ensureWebIndex() first.')
   return webQueryCollection
 }
 

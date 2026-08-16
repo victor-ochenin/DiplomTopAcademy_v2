@@ -8,7 +8,7 @@
 
 ```tsx
 function Greeting() {
-  return <h1>Привет, мир!</h1>
+  return <h1>Привет, мир!</h1>;
 }
 ```
 
@@ -19,12 +19,12 @@ React требует, чтобы имена компонентов начина�
 ```tsx
 // ✅ Компонент
 function MyButton() {
-  return <button>Кликни меня</button>
+  return <button>Кликни меня</button>;
 }
 
 // ❌ Не сработает — React подумает, что это HTML-тег
 function myButton() {
-  return <button>Кликни меня</button>
+  return <button>Кликни меня</button>;
 }
 ```
 
@@ -35,11 +35,11 @@ function myButton() {
 ```tsx
 // Greeting.tsx
 export default function Greeting() {
-  return <h1>Привет!</h1>
+  return <h1>Привет!</h1>;
 }
 
 // App.tsx
-import Greeting from './Greeting'
+import Greeting from './Greeting';
 ```
 
 ## Возвращаемое значение

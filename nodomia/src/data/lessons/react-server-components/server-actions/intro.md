@@ -6,25 +6,25 @@ Server Actions — функции, которые выполняются на с
 
 ```tsx
 // app/actions.ts
-'use server'
+'use server';
 
 export async function createPost(formData: FormData) {
-  const title = formData.get('title')
-  const content = formData.get('content')
+  const title = formData.get('title');
+  const content = formData.get('content');
 
-  await db.query(
-    'INSERT INTO posts (title, content) VALUES ($1, $2)',
-    [title, content]
-  )
+  await db.query('INSERT INTO posts (title, content) VALUES ($1, $2)', [
+    title,
+    content,
+  ]);
 
-  revalidatePath('/posts')
+  revalidatePath('/posts');
 }
 ```
 
 ## Использование в форме
 
 ```tsx
-import { createPost } from './actions'
+import { createPost } from './actions';
 
 function NewPostForm() {
   return (
@@ -33,7 +33,7 @@ function NewPostForm() {
       <textarea name="content" required />
       <button type="submit">Создать</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -44,14 +44,16 @@ Action можно определить прямо внутри компонен�
 ```tsx
 function LikeButton({ postId }: { postId: string }) {
   async function likePost() {
-    'use server'
-    await incrementLikes(postId)
-    revalidatePath(`/posts/${postId}`)
+    'use server';
+    await incrementLikes(postId);
+    revalidatePath(`/posts/${postId}`);
   }
 
-  return <form action={likePost}>
-    <button type="submit">❤️</button>
-  </form>
+  return (
+    <form action={likePost}>
+      <button type="submit">❤️</button>
+    </form>
+  );
 }
 ```
 
@@ -60,13 +62,13 @@ function LikeButton({ postId }: { postId: string }) {
 Хук `useActionState` позволяет читать состояние/ошибки после выполнения action:
 
 ```tsx
-'use client'
+'use client';
 
-import { createPost } from './actions'
-import { useActionState } from 'react'
+import { createPost } from './actions';
+import { useActionState } from 'react';
 
 function Form() {
-  const [state, action, isPending] = useActionState(createPost, null)
+  const [state, action, isPending] = useActionState(createPost, null);
 
   return (
     <form action={action}>
@@ -76,7 +78,7 @@ function Form() {
         {isPending ? 'Сохранение...' : 'Создать'}
       </button>
     </form>
-  )
+  );
 }
 ```
 

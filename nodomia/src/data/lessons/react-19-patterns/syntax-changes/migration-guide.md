@@ -23,22 +23,22 @@ npx codemod react/19/remove-context-provider --target .
 
 ## Шаг 3: Проверка совместимости библиотек
 
-| Библиотека | Статус |
-|------------|--------|
-| React Router 7+ | ✅ |
-| Next.js 15+ | ✅ |
-| Material UI 6+ | ✅ |
-| React Hook Form 8+ | ✅ |
-| React Query 5+ | ✅ |
+| Библиотека         | Статус |
+| ------------------ | ------ |
+| React Router 7+    | ✅     |
+| Next.js 15+        | ✅     |
+| Material UI 6+     | ✅     |
+| React Hook Form 8+ | ✅     |
+| React Query 5+     | ✅     |
 
 ## Шаг 4: Замена устаревших API
 
-| Устарело | Замена |
-|----------|--------|
-| `forwardRef` | `ref` как проп |
-| `<Context.Provider>` | `<Context>` |
-| `PropTypes` | TypeScript |
-| `defaultProps` | Параметры по умолчанию в деструктуризации |
+| Устарело             | Замена                                    |
+| -------------------- | ----------------------------------------- |
+| `forwardRef`         | `ref` как проп                            |
+| `<Context.Provider>` | `<Context>`                               |
+| `PropTypes`          | TypeScript                                |
+| `defaultProps`       | Параметры по умолчанию в деструктуризации |
 
 ## Шаг 5: Тестирование
 

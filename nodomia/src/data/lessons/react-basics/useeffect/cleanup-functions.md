@@ -12,15 +12,15 @@
 
 ```tsx
 function Timer() {
-  const [time, setTime] = useState(0)
+  const [time, setTime] = useState(0);
 
   useEffect(() => {
     const id = setInterval(() => {
-      setTime(prev => prev + 1)
-    }, 1000)
+      setTime((prev) => prev + 1);
+    }, 1000);
 
-    return () => clearInterval(id) // cleanup
-  }, [])
+    return () => clearInterval(id); // cleanup
+  }, []);
 }
 ```
 
@@ -29,11 +29,11 @@ function Timer() {
 ```tsx
 function ChatRoom({ roomId }) {
   useEffect(() => {
-    const connection = createConnection(roomId)
-    connection.connect()
+    const connection = createConnection(roomId);
+    connection.connect();
 
-    return () => connection.disconnect()
-  }, [roomId])
+    return () => connection.disconnect();
+  }, [roomId]);
 }
 ```
 

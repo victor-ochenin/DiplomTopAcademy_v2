@@ -91,19 +91,33 @@ describe('POST /api/check-code', () => {
     const res = await app.request('/api/check-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ taskId: 't1', lessonId: 'l1', code: 'console.log' }),
+      body: JSON.stringify({
+        taskId: 't1',
+        lessonId: 'l1',
+        code: 'console.log',
+      }),
     })
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toEqual({ passed: true, feedback: 'ok' })
-    expect(mockCheckCode).toHaveBeenCalledWith('t1', 'l1', 'console.log', undefined)
+    expect(mockCheckCode).toHaveBeenCalledWith(
+      't1',
+      'l1',
+      'console.log',
+      undefined,
+    )
   })
 
   it('passes kind to checkCode', async () => {
     const res = await app.request('/api/check-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ taskId: 't1', lessonId: 'l1', code: 'x', kind: 'project' }),
+      body: JSON.stringify({
+        taskId: 't1',
+        lessonId: 'l1',
+        code: 'x',
+        kind: 'project',
+      }),
     })
     expect(res.status).toBe(200)
     expect(mockCheckCode).toHaveBeenCalledWith('t1', 'l1', 'x', 'project')

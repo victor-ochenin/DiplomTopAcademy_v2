@@ -5,7 +5,7 @@
 ## Синтаксис
 
 ```tsx
-const value = use(resource)
+const value = use(resource);
 ```
 
 - `resource` — Promise или React Context
@@ -14,28 +14,38 @@ const value = use(resource)
 ## Чтение Promise
 
 ```tsx
-import { use } from 'react'
+import { use } from 'react';
 
 async function fetchComments(postId: string): Promise<Comment[]> {
-  const res = await fetch(`/api/comments/${postId}`)
-  return res.json()
+  const res = await fetch(`/api/comments/${postId}`);
+  return res.json();
 }
 
-function Comments({ commentsPromise }: { commentsPromise: Promise<Comment[]> }) {
-  const comments = use(commentsPromise)
-  return <ul>{comments.map(c => <li key={c.id}>{c.text}</li>)}</ul>
+function Comments({
+  commentsPromise,
+}: {
+  commentsPromise: Promise<Comment[]>;
+}) {
+  const comments = use(commentsPromise);
+  return (
+    <ul>
+      {comments.map((c) => (
+        <li key={c.id}>{c.text}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
 ## Чтение Context
 
 ```tsx
-import { use } from 'react'
-import { ThemeContext } from './ThemeContext'
+import { use } from 'react';
+import { ThemeContext } from './ThemeContext';
 
 function ThemedButton() {
-  const theme = use(ThemeContext)
-  return <button className={`btn-${theme}`}>Нажми меня</button>
+  const theme = use(ThemeContext);
+  return <button className={`btn-${theme}`}>Нажми меня</button>;
 }
 ```
 
@@ -46,18 +56,18 @@ function ThemedButton() {
 ```tsx
 function Card({ promoPromise }: { promoPromise?: Promise<string> }) {
   // ✅ можно внутри условия
-  const promo = promoPromise ? use(promoPromise) : null
-  return <div>{promo}</div>
+  const promo = promoPromise ? use(promoPromise) : null;
+  return <div>{promo}</div>;
 }
 ```
 
 ## use vs useContext
 
-| | `use(Context)` | `useContext(Context)` |
-|---|---|---|
-| Условный вызов | ✅ да | ❌ нет |
-| Чтение Promise | ✅ да | ❌ нет |
-| Ограничение | только render | только render |
+|                | `use(Context)` | `useContext(Context)` |
+| -------------- | -------------- | --------------------- |
+| Условный вызов | ✅ да          | ❌ нет                |
+| Чтение Promise | ✅ да          | ❌ нет                |
+| Ограничение    | только render  | только render         |
 
 ## Интеграция с Suspense
 
@@ -65,11 +75,11 @@ function Card({ promoPromise }: { promoPromise?: Promise<string> }) {
 
 ```tsx
 function Page() {
-  const commentsPromise = fetchComments(postId)
+  const commentsPromise = fetchComments(postId);
   return (
     <Suspense fallback={<p>Загрузка комментариев...</p>}>
       <Comments commentsPromise={commentsPromise} />
     </Suspense>
-  )
+  );
 }
 ```

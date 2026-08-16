@@ -7,10 +7,10 @@
 ```tsx
 function Button() {
   function handleClick() {
-    alert('Кнопка нажата!')
+    alert('Кнопка нажата!');
   }
 
-  return <button onClick={handleClick}>Нажми меня</button>
+  return <button onClick={handleClick}>Нажми меня</button>;
 }
 ```
 
@@ -25,14 +25,14 @@ function Button() {
 ```tsx
 function Form() {
   function handleSubmit(e) {
-    e.preventDefault() // отмена перезагрузки
-    console.log('Форма отправлена')
+    e.preventDefault(); // отмена перезагрузки
+    console.log('Форма отправлена');
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <button type="submit">Отправить</button>
     </form>
-  )
+  );
 }
 ```

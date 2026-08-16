@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
-const OPENROUTER_BASE = process.env.OPENAI_BASE_URL || 'https://openrouter.ai/api/v1'
+const OPENROUTER_BASE =
+  process.env.OPENAI_BASE_URL || 'https://openrouter.ai/api/v1'
 
 const EmbeddingItemSchema = z.object({
   index: z.number().int().nonnegative(),
@@ -29,7 +30,7 @@ export class OpenRouterEmbeddingFunction {
     const res = await fetch(`${OPENROUTER_BASE}/embeddings`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${key}`,
+        Authorization: `Bearer ${key}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ model: this.model, input: texts }),
@@ -45,15 +46,15 @@ export class OpenRouterEmbeddingFunction {
     }
     // Индексы должны быть непротиворечивыми: ровно по одному на каждый входной текст.
     // Иначе сортировка вернёт меньше эмбеддингов или свяжет их с неверным текстом.
-    const indexes = new Set(items.data.map(item => item.index))
+    const indexes = new Set(items.data.map((item) => item.index))
     if (
       items.data.length !== texts.length ||
       indexes.size !== texts.length ||
-      [...indexes].some(index => index >= texts.length)
+      [...indexes].some((index) => index >= texts.length)
     ) {
       throw new Error('OpenRouter returned incomplete embedding response')
     }
     // OpenRouter возвращает массив в произвольном порядке — сортируем по index
-    return items.data.sort((a, b) => a.index - b.index).map(d => d.embedding)
+    return items.data.sort((a, b) => a.index - b.index).map((d) => d.embedding)
   }
 }

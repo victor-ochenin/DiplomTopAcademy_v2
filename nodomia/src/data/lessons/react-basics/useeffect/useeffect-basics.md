@@ -7,7 +7,7 @@
 ```tsx
 useEffect(() => {
   // побочный эффект
-}, [dependencies])
+}, [dependencies]);
 ```
 
 ## Что можно делать в useEffect?
@@ -21,15 +21,15 @@ useEffect(() => {
 
 ```tsx
 function UserProfile({ userId }) {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetch(`/api/users/${userId}`)
-      .then(res => res.json())
-      .then(data => setUser(data))
-  }, [userId])
+      .then((res) => res.json())
+      .then((data) => setUser(data));
+  }, [userId]);
 
-  if (!user) return <p>Загрузка...</p>
-  return <p>{user.name}</p>
+  if (!user) return <p>Загрузка...</p>;
+  return <p>{user.name}</p>;
 }
 ```

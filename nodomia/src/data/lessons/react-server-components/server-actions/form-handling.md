@@ -6,34 +6,36 @@ Server Actions интегрируются напрямую с HTML-формам�
 
 ```tsx
 // actions.ts
-'use server'
+'use server';
 
 export async function signup(prevState: any, formData: FormData) {
-  const email = formData.get('email')
-  const password = formData.get('password')
+  const email = formData.get('email');
+  const password = formData.get('password');
 
   if (!email || !password) {
-    return { error: 'Заполните все поля' }
+    return { error: 'Заполните все поля' };
   }
 
-  const existing = await db.query('SELECT id FROM users WHERE email = $1', [email])
+  const existing = await db.query('SELECT id FROM users WHERE email = $1', [
+    email,
+  ]);
   if (existing.rows.length > 0) {
-    return { error: 'Email уже используется' }
+    return { error: 'Email уже используется' };
   }
 
-  await db.query(
-    'INSERT INTO users (email, password_hash) VALUES ($1, $2)',
-    [email, hashPassword(password)]
-  )
+  await db.query('INSERT INTO users (email, password_hash) VALUES ($1, $2)', [
+    email,
+    hashPassword(password),
+  ]);
 
-  redirect('/dashboard')
+  redirect('/dashboard');
 }
 
 // form.tsx
-'use client'
+('use client');
 
 function SignupForm() {
-  const [state, action, isPending] = useActionState(signup, null)
+  const [state, action, isPending] = useActionState(signup, null);
 
   return (
     <form action={action}>
@@ -44,7 +46,7 @@ function SignupForm() {
         {isPending ? 'Регистрация...' : 'Зарегистрироваться'}
       </button>
     </form>
-  )
+  );
 }
 ```
 
@@ -53,17 +55,17 @@ function SignupForm() {
 Хук `useFormStatus()` даёт доступ к состоянию формы из дочернего компонента:
 
 ```tsx
-'use client'
+'use client';
 
 function SubmitButton() {
-  const { pending, data } = useFormStatus()
+  const { pending, data } = useFormStatus();
   // data — FormData, которая отправляется
 
   return (
     <button type="submit" disabled={pending}>
       {pending ? 'Отправка...' : 'Отправить'}
     </button>
-  )
+  );
 }
 
 function Form() {
@@ -72,7 +74,7 @@ function Form() {
       <input name="title" required />
       <SubmitButton />
     </form>
-  )
+  );
 }
 ```
 
@@ -84,14 +86,16 @@ function Form() {
 // Эта форма работает даже при выключенном JS
 function SearchForm() {
   async function search(formData: FormData) {
-    'use server'
-    const q = formData.get('q')
-    redirect(`/search?q=${q}`)
+    'use server';
+    const q = formData.get('q');
+    redirect(`/search?q=${q}`);
   }
 
-  return <form action={search}>
-    <input name="q" />
-    <button type="submit">Найти</button>
-  </form>
+  return (
+    <form action={search}>
+      <input name="q" />
+      <button type="submit">Найти</button>
+    </form>
+  );
 }
 ```

@@ -30,12 +30,7 @@
       "id": "task-2",
       "type": "choice",
       "question": "Что должно возвращать тело чистой (pure) компоненты при одинаковых пропсах?",
-      "options": [
-        "Тот же JSX",
-        "Разный JSX",
-        "Случайный JSX",
-        "undefined"
-      ],
+      "options": ["Тот же JSX", "Разный JSX", "Случайный JSX", "undefined"],
       "correctAnswer": "Тот же JSX"
     },
     {

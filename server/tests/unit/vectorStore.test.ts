@@ -31,7 +31,10 @@ describe('computeChecksum', () => {
     mockFS.clear()
     addDir(LESSONS_DIR)
     addDir(LESSONS_DIR + '/jsx')
-    addFile(LESSONS_DIR + '/jsx/lesson.json', '{"id":"jsx","documents":[{"id":"a","title":"A"}]}')
+    addFile(
+      LESSONS_DIR + '/jsx/lesson.json',
+      '{"id":"jsx","documents":[{"id":"a","title":"A"}]}',
+    )
     const hash2 = vectorStore.computeChecksum()
 
     expect(hash1).not.toBe(hash2)
@@ -64,10 +67,15 @@ describe('loadDocuments', () => {
   it('parses one lesson with one .md', () => {
     addDir(LESSONS_DIR)
     addDir(LESSONS_DIR + '/what-is-react')
-    addFile(LESSONS_DIR + '/what-is-react/lesson.json', JSON.stringify({
-      id: 'what-is-react',
-      documents: [{ id: 'intro', title: 'Введение', contentFile: 'intro.md' }],
-    }))
+    addFile(
+      LESSONS_DIR + '/what-is-react/lesson.json',
+      JSON.stringify({
+        id: 'what-is-react',
+        documents: [
+          { id: 'intro', title: 'Введение', contentFile: 'intro.md' },
+        ],
+      }),
+    )
     addFile(LESSONS_DIR + '/what-is-react/intro.md', '# React')
 
     const docs = vectorStore.loadDocuments()
@@ -80,13 +88,16 @@ describe('loadDocuments', () => {
   it('skips doc when .md is missing', () => {
     addDir(LESSONS_DIR)
     addDir(LESSONS_DIR + '/what-is-react')
-    addFile(LESSONS_DIR + '/what-is-react/lesson.json', JSON.stringify({
-      id: 'what-is-react',
-      documents: [
-        { id: 'intro', title: 'Введение', contentFile: 'intro.md' },
-        { id: 'setup', title: 'Настройка', contentFile: 'setup.md' },
-      ],
-    }))
+    addFile(
+      LESSONS_DIR + '/what-is-react/lesson.json',
+      JSON.stringify({
+        id: 'what-is-react',
+        documents: [
+          { id: 'intro', title: 'Введение', contentFile: 'intro.md' },
+          { id: 'setup', title: 'Настройка', contentFile: 'setup.md' },
+        ],
+      }),
+    )
     addFile(LESSONS_DIR + '/what-is-react/intro.md', '# React')
 
     const docs = vectorStore.loadDocuments()
@@ -105,21 +116,29 @@ describe('loadDocuments', () => {
   it('handles multiple lessons', () => {
     addDir(LESSONS_DIR)
     addDir(LESSONS_DIR + '/jsx')
-    addFile(LESSONS_DIR + '/jsx/lesson.json', JSON.stringify({
-      id: 'jsx',
-      documents: [{ id: 'intro', title: 'JSX', contentFile: 'jsx-intro.md' }],
-    }))
+    addFile(
+      LESSONS_DIR + '/jsx/lesson.json',
+      JSON.stringify({
+        id: 'jsx',
+        documents: [{ id: 'intro', title: 'JSX', contentFile: 'jsx-intro.md' }],
+      }),
+    )
     addFile(LESSONS_DIR + '/jsx/jsx-intro.md', '# JSX')
     addDir(LESSONS_DIR + '/props')
-    addFile(LESSONS_DIR + '/props/lesson.json', JSON.stringify({
-      id: 'props',
-      documents: [{ id: 'basics', title: 'Props', contentFile: 'props-basics.md' }],
-    }))
+    addFile(
+      LESSONS_DIR + '/props/lesson.json',
+      JSON.stringify({
+        id: 'props',
+        documents: [
+          { id: 'basics', title: 'Props', contentFile: 'props-basics.md' },
+        ],
+      }),
+    )
     addFile(LESSONS_DIR + '/props/props-basics.md', '# Props')
 
     const docs = vectorStore.loadDocuments()
     expect(docs).toHaveLength(2)
-    expect(docs.map(d => d.id)).toContain('jsx__intro')
-    expect(docs.map(d => d.id)).toContain('props__basics')
+    expect(docs.map((d) => d.id)).toContain('jsx__intro')
+    expect(docs.map((d) => d.id)).toContain('props__basics')
   })
 })

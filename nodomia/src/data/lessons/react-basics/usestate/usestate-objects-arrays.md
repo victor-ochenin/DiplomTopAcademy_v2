@@ -5,14 +5,14 @@
 При обновлении объекта нужно создавать новый объект, а не мутировать старый:
 
 ```tsx
-const [user, setUser] = useState({ name: '', age: 0 })
+const [user, setUser] = useState({ name: '', age: 0 });
 
 // ❌ Мутация — React не перерендерит
-user.name = 'Иван'
-setUser(user)
+user.name = 'Иван';
+setUser(user);
 
 // ✅ Новый объект
-setUser({ ...user, name: 'Иван' })
+setUser({ ...user, name: 'Иван' });
 ```
 
 ## Массивы
@@ -20,16 +20,16 @@ setUser({ ...user, name: 'Иван' })
 Для добавления/удаления элементов создавайте новый массив:
 
 ```tsx
-const [items, setItems] = useState([1, 2, 3])
+const [items, setItems] = useState([1, 2, 3]);
 
 // Добавление
-setItems([...items, 4])
+setItems([...items, 4]);
 
 // Удаление по id
-setItems(items.filter(i => i !== 2))
+setItems(items.filter((i) => i !== 2));
 
 // Замена
-setItems(items.map(i => i === 1 ? 99 : i))
+setItems(items.map((i) => (i === 1 ? 99 : i)));
 ```
 
 ## Функция-апдейтер
@@ -37,7 +37,7 @@ setItems(items.map(i => i === 1 ? 99 : i))
 Если новое состояние зависит от предыдущего, используйте функцию:
 
 ```tsx
-setCount(prev => prev + 1)
-setUser(prev => ({ ...prev, name: 'Иван' }))
-setItems(prev => [...prev, newItem])
+setCount((prev) => prev + 1);
+setUser((prev) => ({ ...prev, name: 'Иван' }));
+setItems((prev) => [...prev, newItem]);
 ```

@@ -23,12 +23,7 @@
       "id": "task-6",
       "type": "choice",
       "question": "Какое имя компонента является валидным в React?",
-      "options": [
-        "myComponent",
-        "MyComponent",
-        "my_component",
-        "my-component"
-      ],
+      "options": ["myComponent", "MyComponent", "my_component", "my-component"],
       "correctAnswer": "MyComponent"
     },
     {

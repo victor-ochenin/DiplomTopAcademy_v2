@@ -5,38 +5,38 @@ React 19 упрощает создание контекста — теперь `
 ## До React 19
 
 ```tsx
-const ThemeContext = createContext('light')
+const ThemeContext = createContext('light');
 
 function App() {
   return (
     <ThemeContext.Provider value="dark">
       <Toolbar />
     </ThemeContext.Provider>
-  )
+  );
 }
 ```
 
 ## React 19
 
 ```tsx
-const ThemeContext = createContext('light')
+const ThemeContext = createContext('light');
 
 function App() {
   return (
     <ThemeContext value="dark">
       <Toolbar />
     </ThemeContext>
-  )
+  );
 }
 ```
 
 ## Сравнение
 
-| | До React 19 | React 19 |
-|---|---|---|
-| Провайдер | `<ThemeContext.Provider value={x}>` | `<ThemeContext value={x}>` |
-| Потребитель | `useContext(ThemeContext)` | `useContext(ThemeContext)` |
-| use API | — | `use(ThemeContext)` |
+|             | До React 19                         | React 19                   |
+| ----------- | ----------------------------------- | -------------------------- |
+| Провайдер   | `<ThemeContext.Provider value={x}>` | `<ThemeContext value={x}>` |
+| Потребитель | `useContext(ThemeContext)`          | `useContext(ThemeContext)` |
+| use API     | —                                   | `use(ThemeContext)`        |
 
 ## Автомиграция
 

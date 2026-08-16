@@ -17,7 +17,9 @@ body.rag-panel-open .accordion {
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .accordion-item:hover {
@@ -173,7 +175,9 @@ body.rag-panel-open .accordion {
   overflow: hidden;
   border: 1px solid rgba(0, 210, 255, 0.15);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .card:hover {
@@ -188,7 +192,14 @@ body.rag-panel-open .accordion {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #00d2ff, #00f5d4, #00d2ff, transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #00d2ff,
+    #00f5d4,
+    #00d2ff,
+    transparent
+  );
   filter: blur(0.5px);
 }
 
@@ -199,7 +210,11 @@ body.rag-panel-open .accordion {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(ellipse at top center, rgba(0, 210, 255, 0.04) 0%, transparent 60%);
+  background: radial-gradient(
+    ellipse at top center,
+    rgba(0, 210, 255, 0.04) 0%,
+    transparent 60%
+  );
   pointer-events: none;
 }
 
@@ -215,8 +230,6 @@ body.rag-panel-open .accordion {
   align-items: center;
   gap: 8px;
 }
-
-
 
 .card-title-group {
   display: flex;
@@ -462,35 +475,96 @@ body.rag-panel-open .lesson-container {
 }
 
 /* highlight.js синтаксис */
-.hljs-keyword { color: #c678dd; }
-.hljs-built_in { color: #d19a66; }
-.hljs-type { color: #e5c07b; }
-.hljs-literal { color: #56b6c2; }
-.hljs-number { color: #d19a66; }
-.hljs-regexp { color: #98c379; }
-.hljs-string { color: #98c379; }
-.hljs-subst { color: #abb2bf; }
-.hljs-symbol { color: #61afef; }
-.hljs-class { color: #e5c07b; }
-.hljs-function { color: #61afef; }
-.hljs-title { color: #61afef; }
-.hljs-params { color: #abb2bf; }
-.hljs-comment { color: #5c6370; font-style: italic; }
-.hljs-doctag { color: #c678dd; }
-.hljs-meta { color: #5c6370; }
-.hljs-meta .hljs-keyword { color: #5c6370; }
-.hljs-meta .hljs-string { color: #98c379; }
-.hljs-section { color: #e06c75; }
-.hljs-tag { color: #e06c75; }
-.hljs-name { color: #e06c75; }
-.hljs-attr { color: #d19a66; }
-.hljs-attribute { color: #d19a66; }
-.hljs-variable { color: #e06c75; }
-.hljs-template-variable { color: #e06c75; }
-.hljs-addition { color: #98c379; background: rgba(152,195,121,0.1); }
-.hljs-deletion { color: #e06c75; background: rgba(224,108,117,0.1); }
-.hljs-emphasis { font-style: italic; }
-.hljs-strong { font-weight: bold; }
+.hljs-keyword {
+  color: #c678dd;
+}
+.hljs-built_in {
+  color: #d19a66;
+}
+.hljs-type {
+  color: #e5c07b;
+}
+.hljs-literal {
+  color: #56b6c2;
+}
+.hljs-number {
+  color: #d19a66;
+}
+.hljs-regexp {
+  color: #98c379;
+}
+.hljs-string {
+  color: #98c379;
+}
+.hljs-subst {
+  color: #abb2bf;
+}
+.hljs-symbol {
+  color: #61afef;
+}
+.hljs-class {
+  color: #e5c07b;
+}
+.hljs-function {
+  color: #61afef;
+}
+.hljs-title {
+  color: #61afef;
+}
+.hljs-params {
+  color: #abb2bf;
+}
+.hljs-comment {
+  color: #5c6370;
+  font-style: italic;
+}
+.hljs-doctag {
+  color: #c678dd;
+}
+.hljs-meta {
+  color: #5c6370;
+}
+.hljs-meta .hljs-keyword {
+  color: #5c6370;
+}
+.hljs-meta .hljs-string {
+  color: #98c379;
+}
+.hljs-section {
+  color: #e06c75;
+}
+.hljs-tag {
+  color: #e06c75;
+}
+.hljs-name {
+  color: #e06c75;
+}
+.hljs-attr {
+  color: #d19a66;
+}
+.hljs-attribute {
+  color: #d19a66;
+}
+.hljs-variable {
+  color: #e06c75;
+}
+.hljs-template-variable {
+  color: #e06c75;
+}
+.hljs-addition {
+  color: #98c379;
+  background: rgba(152, 195, 121, 0.1);
+}
+.hljs-deletion {
+  color: #e06c75;
+  background: rgba(224, 108, 117, 0.1);
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: bold;
+}
 
 .lesson-nav {
   display: flex;
@@ -509,7 +583,9 @@ body.rag-panel-open .lesson-container {
   cursor: pointer;
   font-weight: 500;
   font-size: 13px;
-  transition: background 0.15s ease, transform 0.15s cubic-bezier(0.2, 0, 0, 1);
+  transition:
+    background 0.15s ease,
+    transform 0.15s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .lesson-nav button:hover {
@@ -539,7 +615,9 @@ body.rag-panel-open .lesson-container {
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
-  transition: background 0.15s ease, transform 0.15s cubic-bezier(0.2, 0, 0, 1);
+  transition:
+    background 0.15s ease,
+    transform 0.15s cubic-bezier(0.2, 0, 0, 1);
   margin-bottom: 12px;
 }
 
@@ -587,7 +665,9 @@ body.rag-panel-open .task {
   border: 1px solid var(--border);
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
   font-size: 14px;
   color: var(--text-secondary);
 }
@@ -597,7 +677,7 @@ body.rag-panel-open .task {
   border-color: var(--border-hover);
 }
 
-.task__radio-label input[type="radio"] {
+.task__radio-label input[type='radio'] {
   accent-color: var(--accent-cyan);
 }
 
@@ -635,7 +715,9 @@ body.rag-panel-open .task {
   cursor: pointer;
   font-weight: 500;
   font-size: 13px;
-  transition: background 0.15s ease, transform 0.15s cubic-bezier(0.2, 0, 0, 1);
+  transition:
+    background 0.15s ease,
+    transform 0.15s cubic-bezier(0.2, 0, 0, 1);
 }
 
 .task__button:hover {
@@ -726,7 +808,9 @@ body.rag-panel-open .task {
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .loading p {
   color: var(--text-muted);

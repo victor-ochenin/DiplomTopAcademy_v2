@@ -8,15 +8,16 @@ HOC — функция, которая принимает компонент и 
 function withLogger<P extends object>(Component: React.ComponentType<P>) {
   return function WrappedComponent(props: P) {
     useEffect(() => {
-      console.log(`${Component.displayName || Component.name} mounted`)
-      return () => console.log(`${Component.displayName || Component.name} unmounted`)
-    }, [])
+      console.log(`${Component.displayName || Component.name} mounted`);
+      return () =>
+        console.log(`${Component.displayName || Component.name} unmounted`);
+    }, []);
 
-    return <Component {...props} />
-  }
+    return <Component {...props} />;
+  };
 }
 
-const UserProfileWithLogging = withLogger(UserProfile)
+const UserProfileWithLogging = withLogger(UserProfile);
 ```
 
 ## Когда HOC всё ещё полезен
@@ -26,28 +27,28 @@ const UserProfileWithLogging = withLogger(UserProfile)
 ```tsx
 const withAuth = <P extends object>(Component: React.ComponentType<P>) => {
   return function AuthenticatedComponent(props: P) {
-    const user = useUser()
-    if (!user) return <Redirect to="/login" />
-    return <Component {...props} user={user} />
-  }
-}
+    const user = useUser();
+    if (!user) return <Redirect to="/login" />;
+    return <Component {...props} user={user} />;
+  };
+};
 ```
 
 ### 2. Мемоизация пропсов
 
 ```tsx
 const withMemo = <P extends object>(Component: React.ComponentType<P>) => {
-  return React.memo(Component)
-}
+  return React.memo(Component);
+};
 ```
 
 ## HOC vs Render Props vs Hooks
 
-| Паттерн | Случай |
-|---------|--------|
-| HOC | Сквозная функциональность (логирование, авторизация, мемоизация) |
-| Render Props | Гибкий контроль рендеринга (анимация, трекинг мыши) |
-| Custom Hooks | Логика без влияния на рендеринг (состояние, эффекты, подписки) |
+| Паттерн      | Случай                                                           |
+| ------------ | ---------------------------------------------------------------- |
+| HOC          | Сквозная функциональность (логирование, авторизация, мемоизация) |
+| Render Props | Гибкий контроль рендеринга (анимация, трекинг мыши)              |
+| Custom Hooks | Логика без влияния на рендеринг (состояние, эффекты, подписки)   |
 
 ## Рекомендация
 

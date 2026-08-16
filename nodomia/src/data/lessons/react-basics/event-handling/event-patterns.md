@@ -5,21 +5,19 @@
 ```tsx
 function UserList() {
   function handleDelete(userId) {
-    console.log('Удалить пользователя:', userId)
+    console.log('Удалить пользователя:', userId);
   }
 
   return (
     <ul>
-      {users.map(user => (
+      {users.map((user) => (
         <li key={user.id}>
           {user.name}
-          <button onClick={() => handleDelete(user.id)}>
-            Удалить
-          </button>
+          <button onClick={() => handleDelete(user.id)}>Удалить</button>
         </li>
       ))}
     </ul>
-  )
+  );
 }
 ```
 
@@ -27,19 +25,17 @@ function UserList() {
 
 ```tsx
 function handleInputChange(e, fieldName) {
-  setForm(prev => ({ ...prev, [fieldName]: e.target.value }))
+  setForm((prev) => ({ ...prev, [fieldName]: e.target.value }));
 }
 
-return (
-  <input onChange={(e) => handleInputChange(e, 'name')} />
-)
+return <input onChange={(e) => handleInputChange(e, 'name')} />;
 ```
 
 ## Предотвращение всплытия
 
 ```tsx
 function handleChildClick(e) {
-  e.stopPropagation()
+  e.stopPropagation();
   // клик не всплывёт к родителю
 }
 ```

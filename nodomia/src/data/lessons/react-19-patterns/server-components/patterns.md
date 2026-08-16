@@ -7,12 +7,14 @@
 ```tsx
 // PostsList.server.tsx
 async function PostsList() {
-  const posts = await fetchPosts()
+  const posts = await fetchPosts();
   return (
     <div>
-      {posts.map(post => <PostCard key={post.id} post={post} />)}
+      {posts.map((post) => (
+        <PostCard key={post.id} post={post} />
+      ))}
     </div>
-  )
+  );
 }
 ```
 
@@ -23,13 +25,13 @@ async function PostsList() {
 ```tsx
 // Page.server.tsx
 async function Page() {
-  const posts = await db.query('SELECT * FROM posts')
-  return <InteractiveList initialPosts={posts} />
+  const posts = await db.query('SELECT * FROM posts');
+  return <InteractiveList initialPosts={posts} />;
 }
 
 // InteractiveList.client.tsx
 function InteractiveList({ initialPosts }) {
-  const [posts, setPosts] = useState(initialPosts)
+  const [posts, setPosts] = useState(initialPosts);
   // ... сортировка, фильтрация на клиенте
 }
 ```
@@ -41,17 +43,21 @@ function InteractiveList({ initialPosts }) {
 ```tsx
 // Layout.server.tsx
 function Layout({ children }) {
-  return <div className="container">{children}</div>
+  return <div className="container">{children}</div>;
 }
 
 // Dashboard.client.tsx
 function Dashboard() {
-  return <Layout><ServerWidget /></Layout>
+  return (
+    <Layout>
+      <ServerWidget />
+    </Layout>
+  );
 }
 
 // ServerWidget.server.tsx
 async function ServerWidget() {
-  const data = await loadHeavyData()
-  return <div>{/* ... */}</div>
+  const data = await loadHeavyData();
+  return <div>{/* ... */}</div>;
 }
 ```

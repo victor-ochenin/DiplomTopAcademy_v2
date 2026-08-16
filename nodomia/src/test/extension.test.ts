@@ -19,7 +19,8 @@ suite('Nodomia Extension', () => {
 
   test('registers nodomia.sidePanel webview provider', () => {
     // проверяем манифест расширения — подтверждает что провайдер зарегистрирован
-    const packageJson = vscode.extensions.getExtension(EXTENSION_ID)!.packageJSON;
+    const packageJson =
+      vscode.extensions.getExtension(EXTENSION_ID)!.packageJSON;
     const views = packageJson?.contributes?.views?.nodomia;
     const hasSidePanel = views?.some((v: any) => v.id === 'nodomia.sidePanel');
     assert.ok(hasSidePanel, 'nodomia.sidePanel not found in contributes.views');

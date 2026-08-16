@@ -4,8 +4,9 @@ import { join } from 'node:path'
 
 const FETCH_OPTIONS = {
   headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; NodomiaBot/1.0; +https://nodomia.app)',
-    'Accept': 'text/html,application/xhtml+xml',
+    'User-Agent':
+      'Mozilla/5.0 (compatible; NodomiaBot/1.0; +https://nodomia.app)',
+    Accept: 'text/html,application/xhtml+xml',
     'Accept-Language': 'ru,en;q=0.9',
   },
   signal: AbortSignal.timeout(10000),
@@ -35,7 +36,7 @@ export function loadWebSources(dir: string): WebSource[] {
   if (!existsSync(dir)) return []
 
   const results: WebSource[] = []
-  const files = readdirSync(dir).filter(f => f.endsWith('.json'))
+  const files = readdirSync(dir).filter((f) => f.endsWith('.json'))
   for (const file of files) {
     try {
       const raw = readFileSync(join(dir, file), 'utf-8')
@@ -63,12 +64,16 @@ export async function fetchWebContent(url: string): Promise<WebPage | null> {
     const html = await res.text()
     const $ = cheerio.load(html)
 
-    $('script, style, nav, footer, aside, iframe, svg, noscript, [role="navigation"], [role="banner"]').remove()
+    $(
+      'script, style, nav, footer, aside, iframe, svg, noscript, [role="navigation"], [role="banner"]',
+    ).remove()
 
     const title = $('title').first().text().trim() || url
 
     let content = ''
-    const main = $('main, article, [role="main"], .documentation, .content, #content, .markdown').first()
+    const main = $(
+      'main, article, [role="main"], .documentation, .content, #content, .markdown',
+    ).first()
     if (main.length) {
       content = main.html() || ''
     } else {
@@ -80,7 +85,10 @@ export async function fetchWebContent(url: string): Promise<WebPage | null> {
       .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '\n## $1\n')
       .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '\n### $1\n')
       .replace(/<[^>]+>/g, '')
-    content = content.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim()
+    content = content
+      .replace(/[ \t]+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
 
     return { url, title, content }
   } catch {
@@ -143,7 +151,9 @@ export async function scrapeUrls(sources: WebSource[]): Promise<Chunk[]> {
     const urls: string[] = [source.url]
 
     if (source.depth >= 1) {
-      const html = await fetch(source.url, FETCH_OPTIONS).then(r => r.text()).catch(() => '')
+      const html = await fetch(source.url, FETCH_OPTIONS)
+        .then((r) => r.text())
+        .catch(() => '')
       if (html) {
         const $ = cheerio.load(html)
         $('a[href]').each((_, el) => {
@@ -154,7 +164,9 @@ export async function scrapeUrls(sources: WebSource[]): Promise<Chunk[]> {
             if (resolved.origin === new URL(source.url).origin) {
               urls.push(resolved.toString())
             }
-          } catch { /* skip */ }
+          } catch {
+            /* skip */
+          }
         })
       }
     }

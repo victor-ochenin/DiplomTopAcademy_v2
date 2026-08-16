@@ -27,8 +27,13 @@ app.use('/api/*', cors())
 
 let ready = false
 initRag()
-  .then(() => { ready = true; console.log('RAG initialized') })
-  .catch(err => { console.error('RAG init failed:', err) })
+  .then(() => {
+    ready = true
+    console.log('RAG initialized')
+  })
+  .catch((err) => {
+    console.error('RAG init failed:', err)
+  })
 
 // Запрос к RAG: вопрос от пользователя → ответ по материалам курса
 app.post('/api/query', async (c) => {
@@ -37,7 +42,10 @@ app.post('/api/query', async (c) => {
   const parsed = QuerySchema.safeParse(body ?? {})
   if (!parsed.success) {
     const issue = parsed.error.issues[0]
-    return c.json({ error: `${issue.path.join('.') || 'body'}: ${issue.message}` }, 400)
+    return c.json(
+      { error: `${issue.path.join('.') || 'body'}: ${issue.message}` },
+      400,
+    )
   }
   const result = await queryRag(parsed.data.question, parsed.data.history)
   return c.json(result)
@@ -52,7 +60,12 @@ app.post('/api/check-code', async (c) => {
     return c.json({ error: 'taskId, lessonId and code are required' }, 400)
   }
   try {
-    const result = await checkCode(parsed.data.taskId, parsed.data.lessonId, parsed.data.code, parsed.data.kind)
+    const result = await checkCode(
+      parsed.data.taskId,
+      parsed.data.lessonId,
+      parsed.data.code,
+      parsed.data.kind,
+    )
     return c.json(result)
   } catch (err) {
     console.error('check-code failed', err)

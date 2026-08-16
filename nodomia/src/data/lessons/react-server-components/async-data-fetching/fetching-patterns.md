@@ -6,15 +6,15 @@
 
 ```tsx
 async function Page() {
-  const posts = await fetchPosts()
-  const categories = await fetchCategories()
+  const posts = await fetchPosts();
+  const categories = await fetchCategories();
 
   return (
     <div>
       <Sidebar categories={categories} />
       <PostsList posts={posts} />
     </div>
-  )
+  );
 }
 ```
 
@@ -24,13 +24,13 @@ async function Page() {
 
 ```tsx
 async function Sidebar() {
-  const categories = await fetchCategories()
-  return <nav>{/* ... */}</nav>
+  const categories = await fetchCategories();
+  return <nav>{/* ... */}</nav>;
 }
 
 async function PostsList() {
-  const posts = await fetchPosts()
-  return <ul>{/* ... */}</ul>
+  const posts = await fetchPosts();
+  return <ul>{/* ... */}</ul>;
 }
 ```
 
@@ -49,23 +49,29 @@ function Page() {
         <PostsList />
       </Suspense>
     </div>
-  )
+  );
 }
 ```
 
 ## 4. Серверная пагинация
 
 ```tsx
-async function PostsPage({ searchParams }: { searchParams: { page?: string } }) {
-  const page = Number(searchParams.page) || 1
-  const { posts, totalPages } = await fetchPostsPage(page)
+async function PostsPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const page = Number(searchParams.page) || 1;
+  const { posts, totalPages } = await fetchPostsPage(page);
 
   return (
     <div>
-      {posts.map(post => <PostCard key={post.id} post={post} />)}
+      {posts.map((post) => (
+        <PostCard key={post.id} post={post} />
+      ))}
       <Pagination current={page} total={totalPages} />
     </div>
-  )
+  );
 }
 ```
 

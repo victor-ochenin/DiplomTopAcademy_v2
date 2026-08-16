@@ -1,33 +1,40 @@
-import { useCallback, useState } from 'react'
-import type { Task, CheckResult, ExtensionMessage } from '../../types/messages'
-import { useVsCodeApi } from '../../hooks/useVsCodeApi'
-import '../../styles/components.css'
+import { useCallback, useState } from 'react';
+import type { Task, CheckResult, ExtensionMessage } from '../../types/messages';
+import { useVsCodeApi } from '../../hooks/useVsCodeApi';
+import '../../styles/components.css';
 
 interface CodingTaskProps {
-  task: Extract<Task, { type: 'coding' }>
-  lessonId: string
-  onCompleteItem?: (lessonId: string, itemId: string) => void
+  task: Extract<Task, { type: 'coding' }>;
+  lessonId: string;
+  onCompleteItem?: (lessonId: string, itemId: string) => void;
 }
 
-export default function CodingTask({ task, lessonId, onCompleteItem }: CodingTaskProps) {
-  const [result, setResult] = useState<CheckResult | null>(null)
-  const [isChecking, setIsChecking] = useState(false)
+export default function CodingTask({
+  task,
+  lessonId,
+  onCompleteItem,
+}: CodingTaskProps) {
+  const [result, setResult] = useState<CheckResult | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
 
   const { postMessage } = useVsCodeApi(
-    useCallback((msg: ExtensionMessage) => {
-      if (msg.type === 'checkResult') {
-        setResult(msg.payload)
-        setIsChecking(false)
-        if (msg.payload.passed) {
-          onCompleteItem?.(lessonId, task.id)
+    useCallback(
+      (msg: ExtensionMessage) => {
+        if (msg.type === 'checkResult') {
+          setResult(msg.payload);
+          setIsChecking(false);
+          if (msg.payload.passed) {
+            onCompleteItem?.(lessonId, task.id);
+          }
         }
-      }
-    }, [lessonId, task.id, onCompleteItem])
-  )
+      },
+      [lessonId, task.id, onCompleteItem],
+    ),
+  );
 
   const handleCheck = () => {
-    setIsChecking(true)
-    setResult(null)
+    setIsChecking(true);
+    setResult(null);
     postMessage({
       type: 'checkCode',
       payload: {
@@ -37,8 +44,8 @@ export default function CodingTask({ task, lessonId, onCompleteItem }: CodingTas
         kind: task.kind,
         expectedFiles: task.expectedFiles,
       },
-    })
-  }
+    });
+  };
 
   return (
     <div className="task">
@@ -49,13 +56,16 @@ export default function CodingTask({ task, lessonId, onCompleteItem }: CodingTas
       )}
 
       {task.starterCode && (
-        <pre className="coding-task__starter"><code>{task.starterCode}</code></pre>
+        <pre className="coding-task__starter">
+          <code>{task.starterCode}</code>
+        </pre>
       )}
 
       <ul className="coding-task__criteria">
         {task.criteria.map((c, i) => (
           <li key={i}>
-            <span className="coding-task__bullet" />{c}
+            <span className="coding-task__bullet" />
+            {c}
           </li>
         ))}
       </ul>
@@ -71,10 +81,12 @@ export default function CodingTask({ task, lessonId, onCompleteItem }: CodingTas
       )}
 
       {result && (
-        <p className={`task__result task__result--${result.passed ? 'correct' : 'incorrect'}`}>
+        <p
+          className={`task__result task__result--${result.passed ? 'correct' : 'incorrect'}`}
+        >
           {result.feedback}
         </p>
       )}
     </div>
-  )
+  );
 }

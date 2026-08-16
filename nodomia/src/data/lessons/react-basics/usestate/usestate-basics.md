@@ -5,7 +5,7 @@
 ## Синтаксис
 
 ```tsx
-const [state, setState] = useState(initialValue)
+const [state, setState] = useState(initialValue);
 ```
 
 - `state` — текущее значение
@@ -16,14 +16,14 @@ const [state, setState] = useState(initialValue)
 
 ```tsx
 function Counter() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <div>
       <p>Счёт: {count}</p>
       <button onClick={() => setCount(count + 1)}>+1</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -32,7 +32,7 @@ function Counter() {
 Можно использовать несколько вызовов useState:
 
 ```tsx
-const [name, setName] = useState('')
-const [age, setAge] = useState(0)
-const [isActive, setIsActive] = useState(false)
+const [name, setName] = useState('');
+const [age, setAge] = useState(0);
+const [isActive, setIsActive] = useState(false);
 ```

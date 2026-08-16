@@ -8,7 +8,7 @@ function Page() {
     <Suspense fallback={<FullPageSkeleton />}>
       <Dashboard />
     </Suspense>
-  )
+  );
 }
 ```
 
@@ -30,7 +30,7 @@ function Page() {
         <AsyncFooter />
       </Suspense>
     </div>
-  )
+  );
 }
 ```
 
@@ -48,7 +48,7 @@ function Page() {
         </Suspense>
       </AsyncPage>
     </Suspense>
-  )
+  );
 }
 ```
 
@@ -67,7 +67,7 @@ function PostSkeleton() {
       <div className="h-4 bg-gray-200 rounded w-5/6 mb-2" />
       <div className="h-4 bg-gray-200 rounded w-2/3" />
     </div>
-  )
+  );
 }
 ```
 

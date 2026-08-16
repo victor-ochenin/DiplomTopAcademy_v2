@@ -16,21 +16,21 @@
 
 ```tsx
 // ServerComponent.server.js — выполняется на сервере
-import db from './database'
+import db from './database';
 
 async function Posts() {
-  const posts = await db.query('SELECT * FROM posts ORDER BY created_at DESC')
+  const posts = await db.query('SELECT * FROM posts ORDER BY created_at DESC');
 
   return (
     <ul>
-      {posts.map(post => (
+      {posts.map((post) => (
         <li key={post.id}>
           <h2>{post.title}</h2>
           <p>{post.content.slice(0, 100)}...</p>
         </li>
       ))}
     </ul>
-  )
+  );
 }
 ```
 

@@ -18,12 +18,7 @@
       "id": "task-1",
       "type": "choice",
       "question": "Какая оболочка (layout) используется для стриминга серверного рендеринга?",
-      "options": [
-        "<Suspense>",
-        "<Stream>",
-        "<Await>",
-        "<Defer>"
-      ],
+      "options": ["<Suspense>", "<Stream>", "<Await>", "<Defer>"],
       "correctAnswer": "<Suspense>"
     },
     {

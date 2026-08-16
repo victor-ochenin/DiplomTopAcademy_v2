@@ -5,7 +5,7 @@
 ## Синтаксис
 
 ```tsx
-const [optimisticState, addOptimistic] = useOptimistic(state, updateFn)
+const [optimisticState, addOptimistic] = useOptimistic(state, updateFn);
 ```
 
 - `state` — текущее реальное состояние
@@ -16,30 +16,36 @@ const [optimisticState, addOptimistic] = useOptimistic(state, updateFn)
 ## Пример
 
 ```tsx
-import { useOptimistic, useActionState } from 'react'
+import { useOptimistic, useActionState } from 'react';
 
 interface Message {
-  text: string
-  sending?: boolean
+  text: string;
+  sending?: boolean;
 }
 
-async function sendMessage(prev: Message[] | null, formData: FormData): Promise<Message[]> {
-  const text = formData.get('message') as string
-  await new Promise(r => setTimeout(r, 1000))
-  return [...(prev ?? []), { text }]
+async function sendMessage(
+  prev: Message[] | null,
+  formData: FormData,
+): Promise<Message[]> {
+  const text = formData.get('message') as string;
+  await new Promise((r) => setTimeout(r, 1000));
+  return [...(prev ?? []), { text }];
 }
 
 function Thread() {
-  const [messages, formAction] = useActionState(sendMessage, null)
+  const [messages, formAction] = useActionState(sendMessage, null);
 
   const [optimisticMessages, addOptimisticMessage] = useOptimistic(
     messages ?? [],
-    (state, optimisticText: string) => [...state, { text: optimisticText, sending: true }]
-  )
+    (state, optimisticText: string) => [
+      ...state,
+      { text: optimisticText, sending: true },
+    ],
+  );
 
   async function handleSubmit(formData: FormData) {
-    addOptimisticMessage(formData.get('message'))
-    await formAction(formData)
+    addOptimisticMessage(formData.get('message'));
+    await formAction(formData);
   }
 
   return (
@@ -54,7 +60,7 @@ function Thread() {
       <input name="message" required />
       <button type="submit">Отправить</button>
     </form>
-  )
+  );
 }
 ```
 

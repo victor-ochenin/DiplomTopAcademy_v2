@@ -7,31 +7,32 @@ Server Actions — это публичные API-эндпоинты. К ним �
 Никогда не доверяйте данным, пришедшим с клиента:
 
 ```tsx
-'use server'
+'use server';
 
-import { z } from 'zod'
+import { z } from 'zod';
 
 const postSchema = z.object({
   title: z.string().min(3).max(200),
   content: z.string().min(10),
-})
+});
 
 export async function updatePost(formData: FormData) {
   const parsed = postSchema.safeParse({
     title: formData.get('title'),
     content: formData.get('content'),
-  })
+  });
 
   if (!parsed.success) {
-    return { error: parsed.error.flatten() }
+    return { error: parsed.error.flatten() };
   }
 
-  await db.query(
-    'UPDATE posts SET title = $1, content = $2 WHERE id = $3',
-    [parsed.data.title, parsed.data.content, formData.get('postId')]
-  )
+  await db.query('UPDATE posts SET title = $1, content = $2 WHERE id = $3', [
+    parsed.data.title,
+    parsed.data.content,
+    formData.get('postId'),
+  ]);
 
-  revalidatePath('/posts')
+  revalidatePath('/posts');
 }
 ```
 
@@ -40,19 +41,21 @@ export async function updatePost(formData: FormData) {
 Проверяйте права пользователя перед выполнением action:
 
 ```tsx
-'use server'
+'use server';
 
-import { getCurrentUser } from '@/auth'
+import { getCurrentUser } from '@/auth';
 
 export async function deletePost(postId: string) {
-  const user = await getCurrentUser()
-  if (!user) throw new Error('Не авторизован')
+  const user = await getCurrentUser();
+  if (!user) throw new Error('Не авторизован');
 
-  const post = await db.query('SELECT author_id FROM posts WHERE id = $1', [postId])
-  if (post.author_id !== user.id) throw new Error('Нет прав')
+  const post = await db.query('SELECT author_id FROM posts WHERE id = $1', [
+    postId,
+  ]);
+  if (post.author_id !== user.id) throw new Error('Нет прав');
 
-  await db.query('DELETE FROM posts WHERE id = $1', [postId])
-  revalidatePath('/posts')
+  await db.query('DELETE FROM posts WHERE id = $1', [postId]);
+  revalidatePath('/posts');
 }
 ```
 
@@ -63,16 +66,16 @@ React автоматически генерирует CSRF-токены для S
 ## 4. Rate Limiting
 
 ```tsx
-'use server'
+'use server';
 
-import { rateLimit } from '@/lib/rate-limit'
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function createComment(formData: FormData) {
-  const ip = headers().get('x-forwarded-for')
-  const { success } = await rateLimit(ip as string)
+  const ip = headers().get('x-forwarded-for');
+  const { success } = await rateLimit(ip as string);
 
   if (!success) {
-    return { error: 'Слишком много запросов' }
+    return { error: 'Слишком много запросов' };
   }
 
   // обработка комментария...
@@ -84,10 +87,10 @@ export async function createComment(formData: FormData) {
 TypeScript не проверяет данные во время выполнения — используйте схемы (Zod, Yup) для runtime-валидации:
 
 ```tsx
-const input = formData.get('age')
+const input = formData.get('age');
 // formData.get всегда возвращает string | null
-const age = Number(input)
-if (isNaN(age)) return { error: 'Некорректный возраст' }
+const age = Number(input);
+if (isNaN(age)) return { error: 'Некорректный возраст' };
 ```
 
 ## Чеклист

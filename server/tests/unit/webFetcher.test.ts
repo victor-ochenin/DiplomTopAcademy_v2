@@ -21,8 +21,12 @@ async function getMod() {
 describe('chunkPage', () => {
   it('splits content by headings', async () => {
     const mod = await getMod()
-    const page = { url: 'https://example.com', title: 'Test',
-      content: '# Intro\n\nHere is the introduction paragraph with enough text to exceed the minimum threshold of twenty characters.\n\n## Details\n\nMore detailed information that also exceeds the minimum twenty character threshold required.' }
+    const page = {
+      url: 'https://example.com',
+      title: 'Test',
+      content:
+        '# Intro\n\nHere is the introduction paragraph with enough text to exceed the minimum threshold of twenty characters.\n\n## Details\n\nMore detailed information that also exceeds the minimum twenty character threshold required.',
+    }
     const chunks = mod.chunkPage(page, 'src1')
     expect(chunks).toHaveLength(2)
     expect(chunks[0].id).toBe('src1__0')
@@ -34,8 +38,12 @@ describe('chunkPage', () => {
 
   it('filters chunks with body < 20 chars, fallback to single raw chunk', async () => {
     const mod = await getMod()
-    const page = { url: 'https://example.com', title: 'Test',
-      content: '# Short\nhi\n\n## Also short\nbye\n\n### Another\nshort text only' }
+    const page = {
+      url: 'https://example.com',
+      title: 'Test',
+      content:
+        '# Short\nhi\n\n## Also short\nbye\n\n### Another\nshort text only',
+    }
     const chunks = mod.chunkPage(page, 'src1')
     expect(chunks).toHaveLength(1)
     expect(chunks[0].content).toBe(page.content)
@@ -43,8 +51,12 @@ describe('chunkPage', () => {
 
   it('falls back to single chunk when no headings found', async () => {
     const mod = await getMod()
-    const page = { url: 'https://example.com', title: 'Fallback',
-      content: 'plain text without any markdown headings but longer than twenty chars' }
+    const page = {
+      url: 'https://example.com',
+      title: 'Fallback',
+      content:
+        'plain text without any markdown headings but longer than twenty chars',
+    }
     const chunks = mod.chunkPage(page, 'src1')
     expect(chunks).toHaveLength(1)
     expect(chunks[0].id).toBe('src1__0')
@@ -70,19 +82,28 @@ describe('loadWebSources', () => {
   it('parses valid JSON array files', async () => {
     const mod = await getMod()
     addDir('/sources')
-    addFile('/sources/react.json', JSON.stringify([{ id: 'r1', url: 'https://react.dev', depth: 1 }]))
-    addFile('/sources/js.json', JSON.stringify([{ id: 'j1', url: 'https://js.org', depth: 0 }]))
+    addFile(
+      '/sources/react.json',
+      JSON.stringify([{ id: 'r1', url: 'https://react.dev', depth: 1 }]),
+    )
+    addFile(
+      '/sources/js.json',
+      JSON.stringify([{ id: 'j1', url: 'https://js.org', depth: 0 }]),
+    )
     const result = mod.loadWebSources('/sources')
     expect(result).toHaveLength(2)
-    expect(result.find(s => s.id === 'r1')?.url).toBe('https://react.dev')
-    expect(result.find(s => s.id === 'j1')?.depth).toBe(0)
+    expect(result.find((s) => s.id === 'r1')?.url).toBe('https://react.dev')
+    expect(result.find((s) => s.id === 'j1')?.depth).toBe(0)
   })
 
   it('skips non-JSON files', async () => {
     const mod = await getMod()
     addDir('/sources')
     addFile('/sources/notes.txt', 'ignore me')
-    addFile('/sources/sources.json', JSON.stringify([{ id: 's1', url: 'https://example.com', depth: 0 }]))
+    addFile(
+      '/sources/sources.json',
+      JSON.stringify([{ id: 's1', url: 'https://example.com', depth: 0 }]),
+    )
     expect(mod.loadWebSources('/sources')).toHaveLength(1)
   })
 
@@ -132,14 +153,16 @@ describe('fetchWebContent', () => {
   })
 
   it('extracts title, headings and content from HTML', async () => {
-    fetchMock.mockResolvedValue(mockHtmlResponse(`<!doctype html>
+    fetchMock.mockResolvedValue(
+      mockHtmlResponse(`<!doctype html>
 <html><head><title>React Docs</title></head>
 <body><main>
 <h1>Getting Started</h1>
 <p>React is a library for building UIs.</p>
 <h2>Installation</h2>
 <p>Run npm create vite.</p>
-</main></body></html>`))
+</main></body></html>`),
+    )
     const mod = await getMod()
     const result = await mod.fetchWebContent('https://react.dev')
     expect(result).not.toBeNull()
@@ -150,30 +173,36 @@ describe('fetchWebContent', () => {
   })
 
   it('uses <article> as fallback content selector', async () => {
-    fetchMock.mockResolvedValue(mockHtmlResponse(`<html><body><article>
+    fetchMock.mockResolvedValue(
+      mockHtmlResponse(`<html><body><article>
 <h1>Article Title</h1>
 <p>Article content here.</p>
-</article></body></html>`))
+</article></body></html>`),
+    )
     const mod = await getMod()
     const result = await mod.fetchWebContent('https://example.com')
     expect(result!.content).toContain('Article Title')
   })
 
   it('uses url as title when no <title> tag', async () => {
-    fetchMock.mockResolvedValue(mockHtmlResponse('<html><body><p>no title</p></body></html>'))
+    fetchMock.mockResolvedValue(
+      mockHtmlResponse('<html><body><p>no title</p></body></html>'),
+    )
     const mod = await getMod()
     const result = await mod.fetchWebContent('https://example.com/page')
     expect(result!.title).toBe('https://example.com/page')
   })
 
   it('removes script, nav, footer from content', async () => {
-    fetchMock.mockResolvedValue(mockHtmlResponse(`<html><body><main>
+    fetchMock.mockResolvedValue(
+      mockHtmlResponse(`<html><body><main>
 <h1>Content</h1>
 <p>Real text.</p>
 <script>alert('xss')</script>
 <nav>Menu</nav>
 <footer>Footer</footer>
-</main></body></html>`))
+</main></body></html>`),
+    )
     const mod = await getMod()
     const result = await mod.fetchWebContent('https://example.com')
     expect(result!.content).toContain('Real text')

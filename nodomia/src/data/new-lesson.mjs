@@ -1,4 +1,10 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  existsSync,
+  readdirSync,
+} from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -24,9 +30,8 @@ if (!ID_RE.test(courseId)) {
 if (!ID_RE.test(lessonId)) {
   fail(`lessonId must be slug (a-z0-9-), got: "${lessonId}"`);
 }
-const lessonTitle = titleParts.length > 0
-  ? titleParts.join(' ')
-  : lessonId.replace(/-/g, ' ');
+const lessonTitle =
+  titleParts.length > 0 ? titleParts.join(' ') : lessonId.replace(/-/g, ' ');
 
 const courseJsonPath = join(COURSES_DIR, `${courseId}.json`);
 if (!existsSync(courseJsonPath)) {
@@ -55,7 +60,10 @@ const lessonJson = {
 };
 
 mkdirSync(lessonDir, { recursive: true });
-writeFileSync(join(lessonDir, 'lesson.json'), JSON.stringify(lessonJson, null, 2) + '\n');
+writeFileSync(
+  join(lessonDir, 'lesson.json'),
+  JSON.stringify(lessonJson, null, 2) + '\n',
+);
 writeFileSync(join(lessonDir, mdFile), `# ${lessonTitle}\n\n`);
 
 if (!course.lessons.includes(lessonPath)) {

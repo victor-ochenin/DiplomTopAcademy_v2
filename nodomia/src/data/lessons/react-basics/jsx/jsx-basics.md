@@ -41,20 +41,23 @@ return (
 ### 3. Атрибуты в camelCase
 
 ```tsx
-<div className="container">   // class → className
-  <label htmlFor="name">Имя</label>  // for → htmlFor
-  <button onClick={handleClick}>Клик</button>  // onclick → onClick
+<div className="container">
+  {' '}
+  // class → className
+  <label htmlFor="name">Имя</label> // for → htmlFor
+  <button onClick={handleClick}>Клик</button> // onclick → onClick
 </div>
 ```
 
 ### 4. JavaScript-выражения в `{}`
 
 ```tsx
-const name = 'Иван'
-const element = <h1>Привет, {name}!</h1>
+const name = 'Иван';
+const element = <h1>Привет, {name}!</h1>;
 ```
 
 В фигурных скобках можно использовать любое JavaScript-выражение:
+
 ```tsx
 <p>{2 + 2}</p>
 <p>{user.name.toUpperCase()}</p>

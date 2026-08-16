@@ -11,7 +11,7 @@ function User(props) {
       <p>{props.name}</p>
       <p>{props.email}</p>
     </div>
-  )
+  );
 }
 ```
 
@@ -24,7 +24,7 @@ function User({ name, email }) {
       <p>{name}</p>
       <p>{email}</p>
     </div>
-  )
+  );
 }
 ```
 
@@ -32,7 +32,7 @@ function User({ name, email }) {
 
 ```tsx
 function Button({ text = 'Нажми меня', color = 'blue' }) {
-  return <button style={{ backgroundColor: color }}>{text}</button>
+  return <button style={{ backgroundColor: color }}>{text}</button>;
 }
 ```
 
@@ -45,6 +45,6 @@ function Input({ label, ...inputProps }) {
       {label}
       <input {...inputProps} />
     </label>
-  )
+  );
 }
 ```
