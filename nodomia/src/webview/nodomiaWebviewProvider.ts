@@ -1,8 +1,28 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { WebviewMessageSchema, type WebviewMessage } from '../protocol';
+import {
+  AnswerSchema,
+  CheckResultSchema,
+  WebviewMessageSchema,
+  type WebviewMessage,
+} from '../protocol';
 import { loadCourseListAsync, loadCourseDetailsAsync } from '../data/courses';
+
+// Приводит путь из webview к безопасному относительному пути: нормализует `\`,
+// отклоняет абсолютные пути и любой `..`-сегмент (защита от чтения вне workspace).
+function normalizeWorkspacePath(filePath: string): string {
+  const normalized = filePath.replace(/\\/g, '/');
+  if (
+    !normalized ||
+    normalized.startsWith('/') ||
+    /^[a-zA-Z]:/.test(normalized) ||
+    normalized.split('/').includes('..')
+  ) {
+    throw new Error('Недопустимый путь к файлу');
+  }
+  return normalized;
+}
 
 export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
   constructor(private readonly context: vscode.ExtensionContext) {}
@@ -110,11 +130,16 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
           if (!res.ok) {
             throw new Error(`Server error: ${res.status}`);
           }
-          const data = (await res.json()) as { answer: string };
+          const data = AnswerSchema.safeParse(await res.json());
+          if (!data.success) {
+            throw new Error(
+              `Server returned invalid answer: ${data.error.issues[0].message}`,
+            );
+          }
           webviewView.webview.postMessage({
             type: 'answer',
             requestId: message.payload.requestId,
-            payload: data.answer,
+            payload: data.data.answer,
           });
         } catch (err) {
           webviewView.webview.postMessage({
@@ -128,54 +153,70 @@ export class NodomiaWebviewProvider implements vscode.WebviewViewProvider {
 
       case 'checkCode': {
         try {
-          const { taskId, lessonId, filePath, kind, expectedFiles } =
-            message.payload;
           const workspaceFolders = vscode.workspace.workspaceFolders;
           if (!workspaceFolders) {
             throw new Error('No workspace open');
           }
 
           let code: string;
-          if (kind === 'project' && expectedFiles?.length) {
-            code = '';
-            for (const f of expectedFiles) {
-              const pattern = '**/' + f.replace(/\\/g, '/');
-              const uris = await vscode.workspace.findFiles(
-                pattern,
-                '**/node_modules/**',
-                1,
-              );
-              if (uris.length > 0) {
+          switch (message.payload.kind) {
+            case 'project': {
+              code = '';
+              const missingFiles: string[] = [];
+              for (const f of message.payload.expectedFiles) {
+                const pattern = '**/' + f.replace(/\\/g, '/');
+                const uris = await vscode.workspace.findFiles(
+                  pattern,
+                  '**/node_modules/**',
+                  1,
+                );
+                if (uris.length === 0) {
+                  missingFiles.push(f);
+                  continue;
+                }
                 const bytes = await vscode.workspace.fs.readFile(uris[0]);
                 code += `--- ${f} ---\n${new TextDecoder().decode(bytes)}\n\n`;
               }
+              if (missingFiles.length > 0) {
+                throw new Error(
+                  `Не найдены файлы проекта: ${missingFiles.join(', ')}`,
+                );
+              }
+              break;
             }
-            if (!code) {
-              throw new Error(
-                'Не найдены файлы проекта. Убедитесь, что вы создали проект.',
+            case 'file': {
+              const fullPath = vscode.Uri.joinPath(
+                workspaceFolders[0].uri,
+                normalizeWorkspacePath(message.payload.filePath),
               );
+              const bytes = await vscode.workspace.fs.readFile(fullPath);
+              code = new TextDecoder().decode(bytes);
+              break;
             }
-          } else {
-            const fullPath = vscode.Uri.joinPath(
-              workspaceFolders[0].uri,
-              filePath,
-            );
-            const bytes = await vscode.workspace.fs.readFile(fullPath);
-            code = new TextDecoder().decode(bytes);
           }
 
           const res = await fetch('http://localhost:3001/api/check-code', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ taskId, lessonId, code, kind }),
+            body: JSON.stringify({
+              taskId: message.payload.taskId,
+              lessonId: message.payload.lessonId,
+              code,
+              kind: message.payload.kind,
+            }),
           });
           if (!res.ok) {
             throw new Error(`Server error: ${res.status}`);
           }
-          const result = await res.json();
+          const result = CheckResultSchema.safeParse(await res.json());
+          if (!result.success) {
+            throw new Error(
+              `Server returned invalid check result: ${result.error.issues[0].message}`,
+            );
+          }
           webviewView.webview.postMessage({
             type: 'checkResult',
-            payload: result,
+            payload: result.data,
           });
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'Unknown error';

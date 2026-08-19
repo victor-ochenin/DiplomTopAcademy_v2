@@ -1,9 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import type { Course, Lesson, CourseListItem } from '../../types';
+import type { Course, Lesson, CourseListItem, Level } from '../../types';
 import { CourseSchema, LessonFileSchema } from '../schemas';
 
 let basePath = '';
+let allCoursesCache: Map<string, Course> | null = null;
 
 // Задаёт корневой путь, от которого читаются файлы курсов. Вызывается при активации расширения.
 export function initCourses(base: string) {
@@ -11,11 +12,11 @@ export function initCourses(base: string) {
     console.error('Nodomia: initCourses requires a valid base path');
     return;
   }
-  basePath = base;
+  if (base !== basePath) {
+    basePath = base;
+    allCoursesCache = null;
+  }
 }
-
-let listCache: CourseListItem[] | null = null;
-let detailsCache = new Map<string, Course>();
 
 // Безопасный JSON.parse: при ошибке логирует и возвращает null вместо исключения.
 function parseJsonSafe(raw: string, label: string): unknown {
@@ -88,6 +89,13 @@ async function parseCourseAsync(filePath: string): Promise<Course | null> {
     await Promise.all(course.data.lessons.map((ref) => parseLessonAsync(ref)))
   ).filter((l: Lesson | null): l is Lesson => l !== null);
 
+  if (lessons.length !== course.data.lessons.length) {
+    console.error(
+      `Nodomia: course ${course.data.id} rejected: broken lesson references`,
+    );
+    return null;
+  }
+
   return {
     id: course.data.id,
     title: course.data.title,
@@ -95,27 +103,6 @@ async function parseCourseAsync(filePath: string): Promise<Course | null> {
     level: course.data.level,
     icon: course.data.icon,
     lessons,
-  };
-}
-
-// Лёгкое чтение lesson.json без загрузки .md: возвращает только id и счётчики документов/задач.
-async function readLessonMetaAsync(
-  ref: string,
-): Promise<{ id: string; docCount: number; taskCount: number }> {
-  const raw = await loadFileAsync(path.join(basePath, ref));
-  if (!raw) {
-    return { id: '', docCount: 0, taskCount: 0 };
-  }
-  const lesson = LessonFileSchema.safeParse(
-    parseJsonSafe(raw, `lesson meta ${ref}`),
-  );
-  if (!lesson.success) {
-    return { id: '', docCount: 0, taskCount: 0 };
-  }
-  return {
-    id: lesson.data.id,
-    docCount: lesson.data.documents.length,
-    taskCount: lesson.data.tasks.length,
   };
 }
 
@@ -137,71 +124,61 @@ async function getJsonFiles(): Promise<string[]> {
     .map((f) => path.join(coursesDir, f));
 }
 
-// Публичный API: возвращает список курсов с метаданными (без контента уроков). Кэшируется.
-export async function loadCourseListAsync(): Promise<CourseListItem[]> {
-  if (listCache) {
-    return listCache;
+// Читает все курсы и уроки один раз; результат кэшируется и переиспользуется обоими публичными API.
+async function loadAllCoursesAsync(): Promise<Map<string, Course>> {
+  if (allCoursesCache) {
+    return allCoursesCache;
   }
   if (!basePath) {
     console.error('Nodomia: CourseLoader not initialized');
-    return [];
+    return new Map();
   }
 
   const files = await getJsonFiles();
+  const parsed = await Promise.all(files.map((f) => parseCourseAsync(f)));
 
-  const rawCourses = await Promise.all(files.map((f) => loadFileAsync(f)));
+  const map = new Map<string, Course>();
+  for (const course of parsed) {
+    if (course) {
+      map.set(course.id, course);
+    }
+  }
+  allCoursesCache = map;
+  return map;
+}
 
-  const results = await Promise.all(
-    rawCourses.map(async (raw, i): Promise<CourseListItem | null> => {
-      if (!raw) {
-        return null;
-      }
-      const course = CourseSchema.safeParse(
-        parseJsonSafe(raw, `course ${files[i]}`),
-      );
-      if (!course.success) {
-        return null;
-      }
+// Публичный API: возвращает список курсов с метаданными (без контента уроков). Кэшируется.
+export async function loadCourseListAsync(): Promise<CourseListItem[]> {
+  const map = await loadAllCoursesAsync();
 
-      const metas = await Promise.all(
-        course.data.lessons.map((ref) => readLessonMetaAsync(ref)),
-      );
+  const items: CourseListItem[] = [];
+  for (const course of map.values()) {
+    let taskCount = 0;
+    let itemsCount = 0;
+    for (const lesson of course.lessons) {
+      taskCount += lesson.tasks.length;
+      itemsCount += lesson.documents.length + lesson.tasks.length;
+    }
+    items.push({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      level: course.level,
+      icon: course.icon,
+      lessonCount: course.lessons.length,
+      taskCount,
+      itemsCount,
+      lessonIds: course.lessons.map((l) => l.id),
+    });
+  }
 
-      let taskCount = 0;
-      let itemsCount = 0;
-      const lessonIds: string[] = [];
-      for (const meta of metas) {
-        if (meta.id) {
-          lessonIds.push(meta.id);
-        }
-        taskCount += meta.taskCount;
-        itemsCount += meta.docCount + meta.taskCount;
-      }
-
-      return {
-        id: course.data.id,
-        title: course.data.title,
-        description: course.data.description,
-        level: course.data.level,
-        icon: course.data.icon,
-        lessonCount: course.data.lessons.length,
-        taskCount,
-        itemsCount,
-        lessonIds,
-      };
-    }),
-  );
-
-  const items = results.filter((r): r is CourseListItem => r !== null);
-
-  const levelOrder: Record<string, number> = {
+  const levelOrder: Record<Level, number> = {
     beginner: 0,
     intermediate: 1,
     advanced: 2,
   };
   items.sort((a, b) => (levelOrder[a.level] ?? 0) - (levelOrder[b.level] ?? 0));
 
-  listCache = items;
   return items;
 }
 
@@ -209,35 +186,6 @@ export async function loadCourseListAsync(): Promise<CourseListItem[]> {
 export async function loadCourseDetailsAsync(
   id: string,
 ): Promise<Course | null> {
-  if (detailsCache.has(id)) {
-    return detailsCache.get(id) ?? null;
-  }
-  if (!basePath) {
-    console.error('Nodomia: CourseLoader not initialized');
-    return null;
-  }
-
-  const files = await getJsonFiles();
-
-  const rawCourses = await Promise.all(files.map((f) => loadFileAsync(f)));
-
-  for (let i = 0; i < files.length; i++) {
-    const raw = rawCourses[i];
-    if (!raw) {
-      continue;
-    }
-    const data = parseJsonSafe(raw, `course ${files[i]}`);
-    if (!data || typeof data !== 'object') {
-      continue;
-    }
-    if ((data as Record<string, unknown>).id === id) {
-      const course = await parseCourseAsync(files[i]);
-      if (course) {
-        detailsCache.set(id, course);
-      }
-      return course;
-    }
-  }
-
-  return null;
+  const map = await loadAllCoursesAsync();
+  return map.get(id) ?? null;
 }

@@ -1,4 +1,5 @@
 import { vi, describe, it, expect, beforeAll } from 'vitest'
+import { z } from 'zod'
 
 // мокаем serve() чтобы Hono-сервер не стартовал на реальном порту
 vi.mock('@hono/node-server', () => ({ serve: vi.fn() }))
@@ -12,6 +13,7 @@ vi.mock('../../src/rag/query.js', () => ({
   initRag: vi.fn().mockResolvedValue(undefined),
   queryRag: mockQueryRag,
   checkCode: mockCheckCode,
+  HistoryMessageSchema: z.object({ role: z.string(), text: z.string() }),
 }))
 
 let app: any // Hono-приложение, будет импортировано после установки моков
@@ -100,27 +102,7 @@ describe('POST /api/check-code', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toEqual({ passed: true, feedback: 'ok' })
-    expect(mockCheckCode).toHaveBeenCalledWith(
-      't1',
-      'l1',
-      'console.log',
-      undefined,
-    )
-  })
-
-  it('passes kind to checkCode', async () => {
-    const res = await app.request('/api/check-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        taskId: 't1',
-        lessonId: 'l1',
-        code: 'x',
-        kind: 'project',
-      }),
-    })
-    expect(res.status).toBe(200)
-    expect(mockCheckCode).toHaveBeenCalledWith('t1', 'l1', 'x', 'project')
+    expect(mockCheckCode).toHaveBeenCalledWith('t1', 'l1', 'console.log')
   })
 
   it('returns 500 when checkCode throws', async () => {

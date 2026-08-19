@@ -1,27 +1,29 @@
 import { useCallback, useEffect } from 'react';
 import type { WebviewMessage, ExtensionMessage } from '../types/messages';
 
-interface VsCodeApi {
+interface VsCodeApi<TState> {
   postMessage(message: WebviewMessage): void;
-  getState(): Record<string, unknown> | undefined;
-  setState(state: Record<string, unknown>): void;
+  getState(): TState | undefined;
+  setState(state: TState): void;
 }
 
-declare function acquireVsCodeApi(): VsCodeApi;
+declare function acquireVsCodeApi<TState>(): VsCodeApi<TState>;
 
-let api: VsCodeApi | undefined;
+let api: VsCodeApi<unknown> | undefined;
 
 // Возвращает единственный экземпляр VsCodeApi. acquireVsCodeApi вызывается только один раз (ленивый singleton).
-function getVsCodeApi(): VsCodeApi {
+function getVsCodeApi(): VsCodeApi<unknown> {
   if (!api) {
-    api = acquireVsCodeApi();
+    api = acquireVsCodeApi<unknown>();
   }
   return api;
 }
 
 // Хук-обёртка над VsCodeApi webview: даёт postMessage/getState/setState и
 // подписывает onMessage на сообщения, приходящие из extension host.
-export function useVsCodeApi(onMessage?: (message: ExtensionMessage) => void) {
+export function useVsCodeApi<TState = unknown>(
+  onMessage?: (message: ExtensionMessage) => void,
+) {
   const vscode = getVsCodeApi();
 
   useEffect(() => {
@@ -49,12 +51,12 @@ export function useVsCodeApi(onMessage?: (message: ExtensionMessage) => void) {
     ),
 
     getState: useCallback(() => {
-      return vscode.getState();
+      return vscode.getState() as TState | undefined;
     }, [vscode]),
 
     setState: useCallback(
-      (state: Record<string, unknown>) => {
-        vscode.setState(state);
+      (state: TState) => {
+        vscode.setState(state as unknown);
       },
       [vscode],
     ),

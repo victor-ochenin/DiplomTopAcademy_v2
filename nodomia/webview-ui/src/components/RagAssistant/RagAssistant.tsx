@@ -35,12 +35,8 @@ export default function RagAssistant() {
 
   useEffect(() => {
     document.body.classList.toggle('rag-panel-open', isOpen);
-    if (!isOpen) {
-      document.documentElement.style.removeProperty('--rag-panel-width');
-    }
     return () => {
       document.body.classList.remove('rag-panel-open');
-      document.documentElement.style.removeProperty('--rag-panel-width');
     };
   }, [isOpen]);
 

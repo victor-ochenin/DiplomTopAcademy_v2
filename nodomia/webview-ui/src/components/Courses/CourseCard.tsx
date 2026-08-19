@@ -1,10 +1,11 @@
 import type { CourseListItem, UserProgress } from '../../types/messages';
 import { pluralize } from '../../utils/plural';
+import { completedCountForCourse } from '../../utils/progress';
 
 interface CourseCardProps {
   course: CourseListItem;
   onEnter: () => void;
-  progress?: UserProgress;
+  progress: UserProgress;
 }
 
 function progressColor(pct: number): string {
@@ -16,16 +17,7 @@ export default function CourseCard({
   onEnter,
   progress,
 }: CourseCardProps) {
-  let completedItems = 0;
-  if (progress) {
-    for (const lid of course.lessonIds) {
-      for (const key of Object.keys(progress.completedTasks)) {
-        if (key.startsWith(lid + ':')) {
-          completedItems++;
-        }
-      }
-    }
-  }
+  const completedItems = completedCountForCourse(progress, course.lessonIds);
   const percent =
     course.itemsCount > 0
       ? Math.round((completedItems / course.itemsCount) * 100)

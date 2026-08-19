@@ -4,18 +4,22 @@ import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { z } from 'zod'
 import 'dotenv/config'
-import { initRag, queryRag, checkCode } from './rag/query.js'
+import {
+  initRag,
+  queryRag,
+  checkCode,
+  HistoryMessageSchema,
+} from './rag/query.js'
 
 const QuerySchema = z.object({
   question: z.string().min(1),
-  history: z.array(z.object({ role: z.string(), text: z.string() })).optional(),
+  history: z.array(HistoryMessageSchema).optional(),
 })
 
 const CheckCodeSchema = z.object({
   taskId: z.string(),
   lessonId: z.string(),
   code: z.string(),
-  kind: z.enum(['file', 'project']).optional(),
 })
 
 const app = new Hono()
@@ -64,7 +68,6 @@ app.post('/api/check-code', async (c) => {
       parsed.data.taskId,
       parsed.data.lessonId,
       parsed.data.code,
-      parsed.data.kind,
     )
     return c.json(result)
   } catch (err) {

@@ -1,4 +1,5 @@
 import { vi, describe, it, expect, beforeAll } from 'vitest'
+import { z } from 'zod'
 
 // мокаем serve() чтобы сервер не стартовал на порту
 vi.mock('@hono/node-server', () => ({ serve: vi.fn() }))
@@ -14,6 +15,8 @@ beforeAll(async () => {
 vi.mock('../../src/rag/query.js', () => ({
   initRag: vi.fn().mockRejectedValue(new Error('mock fail')),
   queryRag: vi.fn(),
+  checkCode: vi.fn(),
+  HistoryMessageSchema: z.object({ role: z.string(), text: z.string() }),
 }))
 
 describe('POST /api/query — server not ready', () => {

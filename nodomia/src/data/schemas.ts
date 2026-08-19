@@ -1,5 +1,14 @@
 import { z } from 'zod';
 
+export const LEVELS = ['beginner', 'intermediate', 'advanced'] as const;
+export const LevelSchema = z.enum(LEVELS);
+
+export const DocumentFileSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1),
+  contentFile: z.string().regex(/\.md$/),
+});
+
 // Единый источник формы данных курсов: схемы используются валидатором
 // (scripts/validate-data.ts) и рантайм-загрузчиком (src/data/courses).
 
@@ -40,13 +49,7 @@ export const ResourceSchema = z.object({ title: z.string(), url: z.string() });
 export const LessonFileSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
-  documents: z.array(
-    z.object({
-      id: z.string().min(1),
-      title: z.string(),
-      contentFile: z.string().regex(/\.md$/),
-    }),
-  ),
+  documents: z.array(DocumentFileSchema),
   tasks: z.array(TaskSchema),
   resources: z.array(ResourceSchema),
 });
@@ -55,7 +58,7 @@ export const CourseSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   description: z.string().default(''),
-  level: z.enum(['beginner', 'intermediate', 'advanced']).default('beginner'),
+  level: LevelSchema.default('beginner'),
   icon: z.string().optional(),
   lessons: z
     .array(z.string().regex(/^src\/data\/lessons\/.*\/lesson\.json$/))

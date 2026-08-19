@@ -9,6 +9,7 @@ export const CheckResultSchema = z.object({
   passed: z.boolean(),
   feedback: z.string(),
 });
+export const AnswerSchema = z.object({ answer: z.string() });
 export const UserProgressSchema = z.object({
   completedTasks: z.record(z.string(), z.boolean()),
 });
@@ -34,13 +35,20 @@ export const WebviewMessageSchema = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('checkCode'),
-    payload: z.object({
-      taskId: z.string(),
-      lessonId: z.string(),
-      filePath: z.string(),
-      kind: z.enum(['file', 'project']).optional(),
-      expectedFiles: z.array(z.string()).optional(),
-    }),
+    payload: z.discriminatedUnion('kind', [
+      z.object({
+        kind: z.literal('file'),
+        taskId: z.string(),
+        lessonId: z.string(),
+        filePath: z.string().min(1),
+      }),
+      z.object({
+        kind: z.literal('project'),
+        taskId: z.string(),
+        lessonId: z.string(),
+        expectedFiles: z.array(z.string()).min(1),
+      }),
+    ]),
   }),
 ]);
 export type WebviewMessage = z.infer<typeof WebviewMessageSchema>;

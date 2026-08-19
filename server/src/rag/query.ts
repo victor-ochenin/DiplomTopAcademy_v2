@@ -17,9 +17,15 @@ const CheckResultSchema = z.object({
   passed: z.boolean(),
   feedback: z.string(),
 })
+export const HistoryMessageSchema = z.object({
+  role: z.enum(['user', 'assistant']),
+  text: z.string(),
+})
+export type HistoryMessage = z.infer<typeof HistoryMessageSchema>
 const CodingTaskSchema = z.object({
   id: z.string().min(1),
   type: z.literal('coding'),
+  kind: z.enum(['file', 'project']),
   criteria: z.array(z.string().min(1)).min(1),
 })
 
@@ -57,7 +63,7 @@ export async function initRag(): Promise<void> {
 // Возвращает ответ на основе найденных документов.
 export async function queryRag(
   question: string,
-  history?: { role: string; text: string }[],
+  history?: HistoryMessage[],
 ): Promise<{ answer: string }> {
   const docs = await queryAll(question)
 
@@ -80,7 +86,7 @@ Be brief. Do not use concluding phrases like "Таким образом", "В и
     .pipe(new StringOutputParser())
     .invoke({
       history: historyBlock,
-      context: docs.map((d) => d.pageContent ?? '').join('\n\n'),
+      context: docs.map((d) => d.pageContent).join('\n\n'),
       question,
     })
 
@@ -93,7 +99,6 @@ export async function checkCode(
   taskId: string,
   lessonId: string,
   code: string,
-  kind?: string,
 ): Promise<{ passed: boolean; feedback: string }> {
   const courses = readdirSync(LESSONS_DIR, { withFileTypes: true })
     .filter((d) => d.isDirectory())
@@ -121,7 +126,7 @@ export async function checkCode(
       'system',
       `You are a code reviewer. Check the provided code against the criteria.
 Return JSON: {{ "passed": true/false, "feedback": "explanation in Russian" }}
-Do NOT fix the code. Do NOT write a solution. Just evaluate.${kind === 'project' ? ' The code contains multiple project files separated by "--- filename ---" markers.' : ''}`,
+Do NOT fix the code. Do NOT write a solution. Just evaluate.${task.data.kind === 'project' ? ' The code contains multiple project files separated by "--- filename ---" markers.' : ''}`,
     ],
     ['human', `Criteria:\n{criteria}\n\nCode:\n{code}`],
   ])

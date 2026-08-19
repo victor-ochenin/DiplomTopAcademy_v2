@@ -6,18 +6,25 @@ import '../styles/components.css';
 
 interface LessonViewProps {
   document: Document;
-  resources?: Resource[];
+  resources: Resource[];
 }
 
 export default function LessonView({ document, resources }: LessonViewProps) {
   return (
     <div className="lesson-container">
       <h2 className="lesson-title">{document.title}</h2>
-      {resources && resources.length > 0 && (
+      {resources.length > 0 && (
         <div style={{ marginBottom: 16 }}>
-          <a className="lesson-resources__link" href={resources[0].url}>
-            Источник
-          </a>
+          {resources.map((r) => (
+            <a
+              key={r.url}
+              className="lesson-resources__link"
+              href={r.url}
+              style={{ marginRight: 8 }}
+            >
+              {r.title}
+            </a>
+          ))}
         </div>
       )}
       <div className="lesson-content">

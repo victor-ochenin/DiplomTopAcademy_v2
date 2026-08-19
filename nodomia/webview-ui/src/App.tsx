@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type {
   Course,
   CourseListItem,
@@ -6,6 +6,7 @@ import type {
   UserProgress,
 } from './types/messages';
 import { useVsCodeApi } from './hooks/useVsCodeApi';
+import { completeKey } from './utils/progress';
 import CoursesPage from './components/Courses/CoursesPage';
 import CourseTab from './components/Courses/CourseTab';
 import RagAssistant from './components/RagAssistant/RagAssistant';
@@ -20,24 +21,16 @@ export default function App() {
     completedTasks: {},
   });
   const [hasHydratedProgress, setHasHydratedProgress] = useState(false);
-  const courseCache = useRef(new Map<string, Course>());
-  const pendingCourseIdRef = useRef<string | null>(null);
 
   const handleMessage = useCallback((message: ExtensionMessage) => {
     if (message.type === 'courses') {
       setCourses(message.payload);
       setIsLoading(false);
     } else if (message.type === 'courseDetails') {
-      if (
-        message.payload &&
-        message.payload.id === pendingCourseIdRef.current
-      ) {
-        courseCache.current.set(message.payload.id, message.payload);
+      if (message.payload) {
         setSelectedCourse(message.payload);
       }
       setIsLoadingDetails(false);
-    } else if (message.type === 'ragError') {
-      setIsLoading(false);
     } else if (message.type === 'progress') {
       setProgress((prev) => ({
         completedTasks: {
@@ -68,21 +61,15 @@ export default function App() {
     setProgress((prev) => ({
       completedTasks: {
         ...prev.completedTasks,
-        [`${lessonId}:${itemId}`]: true,
+        [completeKey(lessonId, itemId)]: true,
       },
     }));
   }, []);
 
   const handleSelectCourse = useCallback(
     (id: string) => {
-      pendingCourseIdRef.current = id;
-      const cached = courseCache.current.get(id);
-      if (cached) {
-        setSelectedCourse(cached);
-      } else {
-        setIsLoadingDetails(true);
-        postMessage({ type: 'getCourseDetails', payload: id });
-      }
+      setIsLoadingDetails(true);
+      postMessage({ type: 'getCourseDetails', payload: id });
     },
     [postMessage],
   );
@@ -107,6 +94,7 @@ export default function App() {
     <>
       {selectedCourse ? (
         <CourseTab
+          key={selectedCourse.id}
           course={selectedCourse}
           onBack={handleBackToList}
           progress={progress}

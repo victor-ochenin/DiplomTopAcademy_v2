@@ -9,8 +9,11 @@
   --text-muted: #6b6b80;
   --accent-cyan: #00d2ff;
   --accent-green: #22c55e;
+  --accent-green-soft: #81c784;
   --accent-red: #ef4444;
   --accent-blue: #60a5fa;
+  --accent-yellow: #fbbf24;
+  --rag-panel-width: 400px;
 }
 
 * {

@@ -5,8 +5,8 @@ import CodingTask from './CodingTask';
 
 interface TaskRendererProps {
   task: Task;
-  lessonId?: string;
-  onCompleteItem?: (lessonId: string, itemId: string) => void;
+  lessonId: string;
+  onCompleteItem: (lessonId: string, itemId: string) => void;
 }
 
 export default function TaskRenderer({
@@ -19,21 +19,21 @@ export default function TaskRenderer({
       return (
         <ChoiceTask
           task={task}
-          onComplete={() => onCompleteItem?.(lessonId ?? '', task.id)}
+          onComplete={() => onCompleteItem(lessonId, task.id)}
         />
       );
     case 'open':
       return (
         <OpenTask
           task={task}
-          onComplete={() => onCompleteItem?.(lessonId ?? '', task.id)}
+          onComplete={() => onCompleteItem(lessonId, task.id)}
         />
       );
     case 'coding':
       return (
         <CodingTask
           task={task}
-          lessonId={lessonId ?? ''}
+          lessonId={lessonId}
           onCompleteItem={onCompleteItem}
         />
       );

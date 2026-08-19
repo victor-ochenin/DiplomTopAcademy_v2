@@ -1,12 +1,18 @@
 import type { z } from 'zod';
-import { LessonFileSchema, ResourceSchema, TaskSchema } from './data/schemas';
+import {
+  DocumentFileSchema,
+  LessonFileSchema,
+  LevelSchema,
+  ResourceSchema,
+  TaskSchema,
+} from './data/schemas';
 
 export type Task = z.infer<typeof TaskSchema>;
 export type Resource = z.infer<typeof ResourceSchema>;
+export type Level = z.infer<typeof LevelSchema>;
+export type DocumentFile = z.infer<typeof DocumentFileSchema>;
 
-export interface Document {
-  id: string;
-  title: string;
+export interface Document extends Omit<DocumentFile, 'contentFile'> {
   content: string;
 }
 
@@ -18,7 +24,7 @@ export interface CourseListItem {
   id: string;
   title: string;
   description: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
+  level: Level;
   icon?: string;
   lessonCount: number;
   taskCount: number;

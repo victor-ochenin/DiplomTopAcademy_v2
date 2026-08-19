@@ -24,48 +24,54 @@ const WEB_CHECKSUM_FILE = join(CHROMA_DATA_DIR, 'web-checksum.txt')
 const WEB_SOURCES_DIR = join(__dirname, '..', '..', 'data', 'web-sources')
 
 export interface DocumentResult {
-  pageContent: string | null
-  metadata: Record<string, string>
+  pageContent: string
 }
 
-let queryCollection:
-  ((text: string, k?: number) => Promise<DocumentResult[]>) | null = null
-let webQueryCollection:
-  ((text: string, k?: number) => Promise<DocumentResult[]>) | null = null
+type QueryFn = (text: string, k?: number) => Promise<DocumentResult[]>
+
+let queryCollection: QueryFn | null = null
+let webQueryCollection: QueryFn | null = null
+
+// SHA-256 от файлов в директории, отфильтрованных предикатом. Общий хэлпер
+// для чексумм курсов и веб-источников. Пустая/отсутствующая директория → ''.
+function hashFiles(dir: string, filter: (name: string) => boolean): string {
+  if (!existsSync(dir)) return ''
+
+  const files: string[] = []
+
+  function walk(d: string) {
+    const entries = readdirSync(d, { withFileTypes: true })
+    for (const entry of entries.sort((a, b) =>
+      a.name < b.name ? -1 : a.name > b.name ? 1 : 0,
+    )) {
+      const full = join(d, entry.name)
+      if (entry.isDirectory()) walk(full)
+      else if (filter(entry.name)) files.push(full)
+    }
+  }
+  walk(dir)
+
+  const hash = createHash('sha256')
+  for (const file of files) hash.update(readFileSync(file))
+  return hash.digest('hex')
+}
 
 // Вычисляет SHA-256 хэш от всех lesson.json и .md файлов в LESSONS_DIR.
 export function computeChecksum(): string {
-  const files: string[] = []
-
-  function walk(dir: string) {
-    const entries = readdirSync(dir, { withFileTypes: true })
-    for (const entry of entries.sort()) {
-      const full = join(dir, entry.name)
-      if (entry.isDirectory()) walk(full)
-      else if (entry.name === 'lesson.json' || entry.name.endsWith('.md'))
-        files.push(full)
-    }
-  }
-  walk(LESSONS_DIR)
-
-  const hash = createHash('sha256')
-  for (const file of files) hash.update(readFileSync(file))
-  return hash.digest('hex')
+  return hashFiles(
+    LESSONS_DIR,
+    (name) => name === 'lesson.json' || name.endsWith('.md'),
+  )
 }
-// Вычисляет SHA-256 хэш от всех `*.json` файлов в `web-sources/`
+
+// Вычисляет SHA-256 хэш от всех `*.json` файлов в `web-sources/`.
 function computeWebChecksum(): string {
   if (!existsSync(WEB_SOURCES_DIR)) return ''
-
-  const files = readdirSync(WEB_SOURCES_DIR)
-    .filter((f) => f.endsWith('.json'))
-    .sort()
-    .map((f) => join(WEB_SOURCES_DIR, f))
-
-  if (files.length === 0) return ''
-
-  const hash = createHash('sha256')
-  for (const file of files) hash.update(readFileSync(file))
-  return hash.digest('hex')
+  const hasSources = readdirSync(WEB_SOURCES_DIR).some((f) =>
+    f.endsWith('.json'),
+  )
+  if (!hasSources) return ''
+  return hashFiles(WEB_SOURCES_DIR, (name) => name.endsWith('.json'))
 }
 
 // Загружает все документы курса из LESSONS_DIR.
@@ -170,10 +176,7 @@ async function ensureCollection(
         { id: string; content: string; metadata: Record<string, string> }[]
       >
     | { id: string; content: string; metadata: Record<string, string> }[],
-  setQueryFn: (
-    fn: (text: string, k?: number) => Promise<DocumentResult[]>,
-  ) => void,
-): Promise<void> {
+): Promise<QueryFn> {
   mkdirSync(CHROMA_DATA_DIR, { recursive: true })
 
   const client = new ChromaClient({ path: CHROMA_URL })
@@ -220,17 +223,22 @@ async function ensureCollection(
     writeFileSync(checksumFile, current)
   }
 
-  setQueryFn(async (text: string, k = 3) => {
+  if (!current) {
+    // Нет данных для индексации (директория отсутствует/пустая): пустой результат
+    // вместо обращения к несуществующей коллекции Chroma.
+    return async () => []
+  }
+
+  return async (text: string, k = 3) => {
     const collection = await client.getCollection({
       name,
       embeddingFunction: embedder,
     })
     const r = await collection.query({ queryTexts: [text], nResults: k })
-    return (r.documents?.[0] ?? []).map((content, i) => ({
-      pageContent: content,
-      metadata: (r.metadatas?.[0]?.[i] ?? {}) as Record<string, string>,
+    return (r.documents?.[0] ?? []).map((content) => ({
+      pageContent: content ?? '',
     }))
-  })
+  }
 }
 
 // Проверка реальной связи с ChromaDB: heartbeat — фактический HTTP-запрос к серверу.
@@ -241,14 +249,11 @@ export async function testChromaConnection(): Promise<void> {
 }
 
 export async function ensureIndex(): Promise<void> {
-  await ensureCollection(
+  queryCollection = await ensureCollection(
     COLLECTION_NAME,
     CHECKSUM_FILE,
     computeChecksum,
     loadDocuments,
-    (fn) => {
-      queryCollection = fn
-    },
   )
 }
 
@@ -261,43 +266,20 @@ export async function ensureWebIndex(): Promise<void> {
     }
     return scrapeUrls(sources)
   }
-  await ensureCollection(
+  webQueryCollection = await ensureCollection(
     WEB_COLLECTION,
     WEB_CHECKSUM_FILE,
     computeWebChecksum,
     loadWebData,
-    (fn) => {
-      webQueryCollection = fn
-    },
   )
-}
-
-// Возвращает функцию поиска по документам курсов. Должна вызываться после ensureIndex().
-export function getQueryFn(): (
-  text: string,
-  k?: number,
-) => Promise<DocumentResult[]> {
-  if (!queryCollection)
-    throw new Error('ChromaDB not initialized. Call ensureIndex() first.')
-  return queryCollection
-}
-
-// Возвращает функцию поиска по веб-источникам. Должна вызываться после ensureWebIndex().
-export function getWebQueryFn(): (
-  text: string,
-  k?: number,
-) => Promise<DocumentResult[]> {
-  if (!webQueryCollection)
-    throw new Error('Web docs not initialized. Call ensureWebIndex() first.')
-  return webQueryCollection
 }
 
 // Объединяет результаты поиска по документам курсов и веб-источникам.
 // Сначала веб-документы, затем курсы (веб-документы обычно актуальнее).
 export async function queryAll(text: string): Promise<DocumentResult[]> {
   const [courseDocs, webDocs] = await Promise.all([
-    getQueryFn()(text, 2),
-    getWebQueryFn()(text, 2),
+    queryCollection!(text, 2),
+    webQueryCollection!(text, 2),
   ])
   return [...webDocs, ...courseDocs]
 }

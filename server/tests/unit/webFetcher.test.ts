@@ -1,4 +1,4 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest'
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest'
 import { createMockFS } from '../helpers/test-utils'
 
 const { mockFS, addFile, addDir, mockImpl } = createMockFS()
@@ -16,6 +16,12 @@ async function getMod() {
   if (!webFetcher) webFetcher = await import('../../src/rag/webFetcher.js')
   return webFetcher
 }
+
+// Прогреваем тяжёлый импорт (cheerio + граф модулей) заранее, чтобы первый
+// тест не упирался в дефолтный таймаут при параллельной загрузке файлов.
+beforeAll(async () => {
+  await getMod()
+}, 20000)
 
 // ---------- chunkPage (pure, no mocks) ----------
 describe('chunkPage', () => {

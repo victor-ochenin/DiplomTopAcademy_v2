@@ -9,7 +9,7 @@
 }
 
 body.rag-panel-open .accordion {
-  padding-right: calc(var(--rag-panel-width, 400px) + 12px);
+  padding-right: calc(var(--rag-panel-width) + 12px);
 }
 
 .accordion-item {
@@ -96,14 +96,6 @@ body.rag-panel-open .accordion {
   border-top: 1px solid var(--border);
 }
 
-.lesson-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-top: 12px;
-}
-
 .lesson-item {
   display: flex;
   align-items: center;
@@ -145,7 +137,7 @@ body.rag-panel-open .accordion {
 .lesson-type-icon.challenge svg {
   width: 16px;
   height: 16px;
-  color: #fbbf24;
+  color: var(--accent-yellow);
 }
 
 .lesson-name {
@@ -164,7 +156,6 @@ body.rag-panel-open .accordion {
 
 .card {
   width: 100%;
-  max-width: 270px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -281,7 +272,7 @@ body.rag-panel-open .accordion {
 }
 
 .card-description {
-  color: #9a9ab0;
+  color: var(--text-secondary);
   font-size: 10px;
   line-height: 1.5;
   margin-bottom: 12px;
@@ -302,7 +293,7 @@ body.rag-panel-open .accordion {
   display: flex;
   align-items: center;
   gap: 5px;
-  color: #6b6b80;
+  color: var(--text-muted);
   font-size: 10px;
   font-weight: 500;
 }
@@ -322,7 +313,7 @@ body.rag-panel-open .accordion {
 }
 
 body.rag-panel-open .courses-page {
-  padding-right: calc(var(--rag-panel-width, 400px) + 24px);
+  padding-right: calc(var(--rag-panel-width) + 24px);
 }
 
 .courses-title {
@@ -335,7 +326,7 @@ body.rag-panel-open .courses-page {
 }
 
 .courses-count {
-  color: #8b8ba7;
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
 }
@@ -354,7 +345,7 @@ body.rag-panel-open .courses-page {
 }
 
 body.rag-panel-open .lesson-container {
-  padding-right: calc(var(--rag-panel-width, 400px));
+  padding-right: calc(var(--rag-panel-width));
 }
 
 .lesson-title {
@@ -639,7 +630,7 @@ body.rag-panel-open .lesson-container {
 }
 
 body.rag-panel-open .task {
-  padding-right: calc(var(--rag-panel-width, 400px));
+  padding-right: calc(var(--rag-panel-width));
 }
 
 .task__question {
@@ -827,14 +818,14 @@ body.rag-panel-open .task {
 .lesson-progress {
   font-size: 12px;
   font-weight: 600;
-  color: #888;
+  color: var(--text-muted);
   margin-left: auto;
   margin-right: 12px;
   flex-shrink: 0;
 }
 .lesson-type-icon.completed {
-  background: rgba(76, 175, 80, 0.25) !important;
+  background: rgba(76, 175, 80, 0.25);
 }
 .lesson-type-icon.completed svg {
-  color: #81c784 !important;
+  color: var(--accent-green-soft);
 }

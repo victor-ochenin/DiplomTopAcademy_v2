@@ -6,7 +6,7 @@ import '../../styles/components.css';
 interface CodingTaskProps {
   task: Extract<Task, { type: 'coding' }>;
   lessonId: string;
-  onCompleteItem?: (lessonId: string, itemId: string) => void;
+  onCompleteItem: (lessonId: string, itemId: string) => void;
 }
 
 export default function CodingTask({
@@ -24,7 +24,7 @@ export default function CodingTask({
           setResult(msg.payload);
           setIsChecking(false);
           if (msg.payload.passed) {
-            onCompleteItem?.(lessonId, task.id);
+            onCompleteItem(lessonId, task.id);
           }
         }
       },
@@ -37,13 +37,20 @@ export default function CodingTask({
     setResult(null);
     postMessage({
       type: 'checkCode',
-      payload: {
-        taskId: task.id,
-        lessonId,
-        filePath: task.expectedFiles[0],
-        kind: task.kind,
-        expectedFiles: task.expectedFiles,
-      },
+      payload:
+        task.kind === 'project'
+          ? {
+              kind: 'project',
+              taskId: task.id,
+              lessonId,
+              expectedFiles: task.expectedFiles,
+            }
+          : {
+              kind: 'file',
+              taskId: task.id,
+              lessonId,
+              filePath: task.expectedFiles[0],
+            },
     });
   };
 

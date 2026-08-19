@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Course, UserProgress } from '../../types/messages';
+import { completeKey } from '../../utils/progress';
 import LessonView from '../LessonView';
 import TaskRenderer from '../Tasks/TaskRenderer';
 
@@ -62,7 +63,7 @@ export default function CourseTab({
     for (const lesson of course.lessons) {
       const items = lessonItemsMap.get(lesson.id) ?? [];
       const done = items.filter(
-        (i) => progress.completedTasks[`${lesson.id}:${i.id}`],
+        (i) => progress.completedTasks[completeKey(lesson.id, i.id)],
       ).length;
       map.set(
         lesson.id,
@@ -75,10 +76,6 @@ export default function CourseTab({
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [activeItem]);
-
-  useEffect(() => {
-    setActiveItem(null);
-  }, [course.id]);
 
   if (activeItem !== null) {
     const lesson = course.lessons.find((l) => l.id === activeItem.lessonId);
@@ -211,7 +208,7 @@ export default function CourseTab({
                   {items.map((item, idx) => {
                     // true если элемент уже пройден (зелёная иконка)
                     const isCompleted =
-                      progress.completedTasks[`${lesson.id}:${item.id}`];
+                      progress.completedTasks[completeKey(lesson.id, item.id)];
                     const typeClass =
                       item.type === 'task' ? 'challenge' : 'lesson';
                     return (
