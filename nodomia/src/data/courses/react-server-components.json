@@ -3,6 +3,7 @@
   "title": "React Server Components",
   "description": "Продвинутый курс по серверным компонентам, асинхронной загрузке данных, Server Actions, Streaming и React Compiler.",
   "level": "advanced",
+  "category": "react",
   "icon": "<svg viewBox=\"0 0 100 100\" fill=\"none\"><ellipse cx=\"50\" cy=\"50\" rx=\"42\" ry=\"16\" stroke=\"#61dafb\" strokeWidth=\"2.5\" transform=\"rotate(0 50 50)\" fill=\"none\"/><ellipse cx=\"50\" cy=\"50\" rx=\"42\" ry=\"16\" stroke=\"#61dafb\" strokeWidth=\"2.5\" transform=\"rotate(60 50 50)\" fill=\"none\"/><ellipse cx=\"50\" cy=\"50\" rx=\"42\" ry=\"16\" stroke=\"#61dafb\" strokeWidth=\"2.5\" transform=\"rotate(120 50 50)\" fill=\"none\"/><circle cx=\"50\" cy=\"50\" r=\"5\" fill=\"#61dafb\"/></svg>",
   "lessons": [
     "src/data/lessons/react-server-components/rsc-fundamentals/lesson.json",

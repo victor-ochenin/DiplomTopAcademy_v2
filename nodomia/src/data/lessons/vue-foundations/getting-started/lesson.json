@@ -1,0 +1,90 @@
+{
+  "id": "getting-started",
+  "title": "Знакомство с Vue",
+  "documents": [
+    {
+      "id": "what-is-vue",
+      "title": "Что такое Vue.js?",
+      "contentFile": "src/data/lessons/vue-foundations/getting-started/what-is-vue.md"
+    },
+    {
+      "id": "setup-dev-environment",
+      "title": "Настройка окружения разработки",
+      "contentFile": "src/data/lessons/vue-foundations/getting-started/setup-dev-environment.md"
+    },
+    {
+      "id": "create-vue-project",
+      "title": "Создание первого проекта Vue",
+      "contentFile": "src/data/lessons/vue-foundations/getting-started/create-vue-project.md"
+    },
+    {
+      "id": "single-file-components",
+      "title": "Однофайловые компоненты (SFC)",
+      "contentFile": "src/data/lessons/vue-foundations/getting-started/single-file-components.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "vue-progressive-philosophy",
+      "type": "choice",
+      "question": "Что означает, что Vue — «прогрессивный» фреймворк?",
+      "options": [
+        "Его можно внедрять постепенно, от отдельного компонента до полного SPA",
+        "Он работает только с прогрессивным улучшением браузера",
+        "Он требует полной переписки приложения сразу",
+        "Он поддерживает только новейшие браузеры"
+      ],
+      "correctAnswer": "Его можно внедрять постепенно, от отдельного компонента до полного SPA"
+    },
+    {
+      "id": "sfc-structure",
+      "type": "choice",
+      "question": "Какие три основных блока содержит Single-File Component?",
+      "options": [
+        "<template>, <script>, <style>",
+        "<html>, <body>, <style>",
+        "<component>, <script>, <css>",
+        "<template>, <logic>, <styles>"
+      ],
+      "correctAnswer": "<template>, <script>, <style>"
+    },
+    {
+      "id": "create-vue-app",
+      "type": "coding",
+      "kind": "project",
+      "question": "Создайте новый Vue-проект",
+      "instructions": "Создайте новый проект через `npm create vue@latest my-app`, установите зависимости и проверьте, что есть стандартная структура Vue-проекта.",
+      "criteria": [
+        "Есть package.json",
+        "Есть index.html",
+        "Есть src/main.js",
+        "Есть src/App.vue"
+      ],
+      "starterCode": "",
+      "expectedFiles": [
+        "package.json",
+        "index.html",
+        "src/main.js",
+        "src/App.vue"
+      ]
+    },
+    {
+      "id": "scoped-styles-purpose",
+      "type": "choice",
+      "question": "Для чего используется атрибут scoped в <style> SFC?",
+      "options": [
+        "Ограничить стили только текущим компонентом",
+        "Ускорить загрузку стилей",
+        "Сделать стили видимыми глобально",
+        "Подключить внешнюю таблицу стилей"
+      ],
+      "correctAnswer": "Ограничить стили только текущим компонентом"
+    }
+  ],
+  "resources": [
+    {
+      "title": "Официальная документация Vue",
+      "url": "https://vuejs.org"
+    }
+  ]
+}

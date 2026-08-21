@@ -25,6 +25,7 @@ export interface CourseListItem {
   title: string;
   description: string;
   level: Level;
+  category: string;
   icon?: string;
   lessonCount: number;
   taskCount: number;

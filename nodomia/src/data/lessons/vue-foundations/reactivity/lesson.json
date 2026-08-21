@@ -1,0 +1,80 @@
+{
+  "id": "reactivity",
+  "title": "Основы реактивности",
+  "documents": [
+    {
+      "id": "ref-state",
+      "title": "Понимание ref() для реактивного состояния",
+      "contentFile": "src/data/lessons/vue-foundations/reactivity/ref-state.md"
+    },
+    {
+      "id": "reactive-objects",
+      "title": "Реактивные объекты с reactive()",
+      "contentFile": "src/data/lessons/vue-foundations/reactivity/reactive-objects.md"
+    },
+    {
+      "id": "computed-properties",
+      "title": "Computed-свойства для производного состояния",
+      "contentFile": "src/data/lessons/vue-foundations/reactivity/computed-properties.md"
+    },
+    {
+      "id": "watchers",
+      "title": "Введение в watchers",
+      "contentFile": "src/data/lessons/vue-foundations/reactivity/watchers.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "access-ref-value",
+      "type": "coding",
+      "kind": "file",
+      "question": "Создайте счётчик на ref()",
+      "instructions": "Создайте файл Counter.vue в корне открытой папки. Используйте ref(0) для состояния count, кнопки + и - изменяют count через .value, в шаблоне выводится count.",
+      "criteria": [
+        "Используется ref с начальным значением 0",
+        "Кнопка '+' увеличивает count.value",
+        "Кнопка '-' уменьшает count.value",
+        "В шаблоне выводится count"
+      ],
+      "starterCode": "",
+      "expectedFiles": ["Counter.vue"]
+    },
+    {
+      "id": "refs-in-templates",
+      "type": "choice",
+      "question": "Как обратиться к ref-переменной count внутри <template>?",
+      "options": ["count", "count.value", "$ref.count", "count()"],
+      "correctAnswer": "count"
+    },
+    {
+      "id": "computed-vs-methods",
+      "type": "choice",
+      "question": "Чем computed отличается от обычного метода?",
+      "options": [
+        "Computed кэширует результат и пересчитывает его только при изменении зависимостей",
+        "Computed всегда выполняется при каждом рендере, как и метод",
+        "Computed доступен только на сервере",
+        "Методы не могут использоваться в шаблонах"
+      ],
+      "correctAnswer": "Computed кэширует результат и пересчитывает его только при изменении зависимостей"
+    },
+    {
+      "id": "when-to-use-watchers",
+      "type": "choice",
+      "question": "В каком случае уместно использовать watch?",
+      "options": [
+        "Когда нужно выполнить побочный эффект при изменении данных, например сохранить значение в localStorage",
+        "Когда нужно вычислить производное значение для шаблона",
+        "Когда нужно объявить реактивную переменную",
+        "Когда нужно привязать атрибут к данным"
+      ],
+      "correctAnswer": "Когда нужно выполнить побочный эффект при изменении данных, например сохранить значение в localStorage"
+    }
+  ],
+  "resources": [
+    {
+      "title": "Reactivity Fundamentals — Vue Docs",
+      "url": "https://vuejs.org/guide/essentials/reactivity-fundamentals.html"
+    }
+  ]
+}

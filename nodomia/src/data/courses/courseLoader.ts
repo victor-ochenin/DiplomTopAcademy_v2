@@ -101,6 +101,7 @@ async function parseCourseAsync(filePath: string): Promise<Course | null> {
     title: course.data.title,
     description: course.data.description,
     level: course.data.level,
+    category: course.data.category,
     icon: course.data.icon,
     lessons,
   };
@@ -164,6 +165,7 @@ export async function loadCourseListAsync(): Promise<CourseListItem[]> {
       title: course.title,
       description: course.description,
       level: course.level,
+      category: course.category,
       icon: course.icon,
       lessonCount: course.lessons.length,
       taskCount,
