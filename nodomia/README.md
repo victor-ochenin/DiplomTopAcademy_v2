@@ -1,8 +1,24 @@
 # Nodomia
 
-Расширение для VS Code — образовательный тренажёр по React с персонализированным RAG-ассистентом.
+Расширение для VS Code — образовательный тренажёр по React и Vue с персонализированным RAG-ассистентом.
 
 Пользователь проходит мини-курсы с теорией и практическими заданиями прямо в редакторе. Ассистент отвечает на вопросы строго по материалам курса, анализирует код пользователя и помогает разобраться в теме, но не пишет код за него.
+
+## Установка
+
+Скачайте `.vsix` со страницы [Releases](https://github.com/victor-ochenin/DiplomTopAcademy_v2/releases) и установите через VS Code: палитра команд → **Extensions: Install from VSIX**.
+
+> **Требуется сервер**: RAG-ассистент и LLM-проверка coding-заданий работают только при локально запущенном RAG-сервере. Без него доступны курсы, теория и задания с проверкой на стороне UI (choice/open).
+>
+> Запуск сервера:
+>
+> ```
+> git clone https://github.com/victor-ochenin/DiplomTopAcademy_v2.git
+> cd DiplomTopAcademy_v2/server
+> cp .env.example .env        # указать ключ OpenRouter
+> docker compose up -d        # ChromaDB
+> npm ci && npm run dev       # http://localhost:3001
+> ```
 
 ## Архитектура
 
@@ -58,6 +74,7 @@ src/data/
     react-basics.json            — метаданные курса, ссылки на уроки
     react-19-patterns.json
     react-server-components.json
+    vue-foundations.json
   lessons/
     react-basics/
       what-is-react/
@@ -78,7 +95,7 @@ src/data/
 
 ### Прогресс
 
-Прогресс пользователя сохраняется в `context.workspaceState` VS Code (ключ `nodomia.progress`). Данные хранятся между сессиями, привязаны к рабочему проекту.
+Прогресс пользователя сохраняется в `context.globalState` VS Code (ключ `nodomia.progress`). Данные хранятся между сессиями.
 
 Прогресс отображается в карточках курсов и в аккордеоне уроков (процент выполнения, статус заданий).
 

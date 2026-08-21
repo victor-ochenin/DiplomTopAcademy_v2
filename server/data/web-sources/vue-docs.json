@@ -1,0 +1,10 @@
+[
+  { "id": "vue-introduction", "url": "https://vuejs.org/guide/introduction.html", "depth": 0 },
+  { "id": "vue-quick-start", "url": "https://vuejs.org/guide/quick-start.html", "depth": 0 },
+  { "id": "vue-template-syntax", "url": "https://vuejs.org/guide/essentials/template-syntax.html", "depth": 0 },
+  { "id": "vue-conditional", "url": "https://vuejs.org/guide/essentials/conditional.html", "depth": 0 },
+  { "id": "vue-list", "url": "https://vuejs.org/guide/essentials/list.html", "depth": 0 },
+  { "id": "vue-reactivity-fundamentals", "url": "https://vuejs.org/guide/essentials/reactivity-fundamentals.html", "depth": 0 },
+  { "id": "vue-computed", "url": "https://vuejs.org/guide/essentials/computed.html", "depth": 0 },
+  { "id": "vue-watchers", "url": "https://vuejs.org/guide/essentials/watchers.html", "depth": 0 }
+]

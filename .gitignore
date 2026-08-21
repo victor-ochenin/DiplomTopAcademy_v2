@@ -1,4 +1,4 @@
-# артефакты расширения (были в nodomia/.gitignore)
+﻿# артефакты расширения (были в nodomia/.gitignore)
 out
 dist
 node_modules
@@ -15,4 +15,5 @@ node_modules
 docs/
 
 # сервер: рабочие данные (уроки, веб-источники, БД Chroma) — НЕ в репозитории
-server/data/
+server/data/*
+!server/data/web-sources
