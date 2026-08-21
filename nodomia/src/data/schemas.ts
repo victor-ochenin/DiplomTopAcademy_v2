@@ -59,6 +59,7 @@ export const CourseSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
   level: LevelSchema.default('beginner'),
+  category: z.string().default('general'),
   icon: z.string().optional(),
   lessons: z
     .array(z.string().regex(/^src\/data\/lessons\/.*\/lesson\.json$/))

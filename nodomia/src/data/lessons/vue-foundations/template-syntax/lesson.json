@@ -1,0 +1,91 @@
+{
+  "id": "template-syntax",
+  "title": "Синтаксис шаблонов и рендеринг",
+  "documents": [
+    {
+      "id": "text-interpolation",
+      "title": "Текстовая интерполяция и выражения",
+      "contentFile": "src/data/lessons/vue-foundations/template-syntax/text-interpolation.md"
+    },
+    {
+      "id": "attribute-bindings",
+      "title": "Привязки атрибутов с v-bind",
+      "contentFile": "src/data/lessons/vue-foundations/template-syntax/attribute-bindings.md"
+    },
+    {
+      "id": "conditional-rendering",
+      "title": "Условный рендеринг: v-if и v-show",
+      "contentFile": "src/data/lessons/vue-foundations/template-syntax/conditional-rendering.md"
+    },
+    {
+      "id": "list-rendering",
+      "title": "Рендеринг списков с v-for",
+      "contentFile": "src/data/lessons/vue-foundations/template-syntax/list-rendering.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "mustache-syntax",
+      "type": "choice",
+      "question": "Как вывести значение переменной message в шаблоне Vue?",
+      "options": [
+        "{{ message }}",
+        "{message}",
+        "@message",
+        "v:message"
+      ],
+      "correctAnswer": "{{ message }}"
+    },
+    {
+      "id": "v-bind-shorthand",
+      "type": "open",
+      "question": "Как записать v-bind:href=\"url\" в сокращённой форме?",
+      "acceptableAnswers": [
+        ":href=\"url\""
+      ]
+    },
+    {
+      "id": "v-if-vs-v-show",
+      "type": "choice",
+      "question": "Чем v-show отличается от v-if?",
+      "options": [
+        "v-show оставляет элемент в DOM, скрывая его через display: none; v-if создаёт/удаляет элемент",
+        "v-show создаёт/удаляет элемент; v-if скрывает через display: none",
+        "Они полностью идентичны",
+        "v-show работает только с изображениями"
+      ],
+      "correctAnswer": "v-show оставляет элемент в DOM, скрывая его через display: none; v-if создаёт/удаляет элемент"
+    },
+    {
+      "id": "v-for-key",
+      "type": "open",
+      "question": "Какой атрибут нужно указывать для элементов внутри v-for для их стабильной идентификации?",
+      "acceptableAnswers": [
+        "key",
+        ":key",
+        "атрибут key"
+      ]
+    },
+    {
+      "id": "v-for-output",
+      "type": "coding",
+      "kind": "file",
+      "question": "Отобразите список через v-for",
+      "instructions": "Создайте файл TodoList.vue в корне открытой папки. Компонент должен принимать массив items через props и выводить каждый элемент в <li> с использованием v-for и :key.",
+      "criteria": [
+        "Есть v-for по массиву items",
+        "У элементов <li> есть :key",
+        "Компонент принимает props items",
+        "Компонент экспортируется по умолчанию"
+      ],
+      "starterCode": "",
+      "expectedFiles": ["TodoList.vue"]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Template Syntax — Vue Docs",
+      "url": "https://vuejs.org/guide/essentials/template-syntax.html"
+    }
+  ]
+}

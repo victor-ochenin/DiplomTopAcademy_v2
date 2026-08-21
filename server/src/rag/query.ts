@@ -74,7 +74,7 @@ export async function queryRag(
   const prompt = ChatPromptTemplate.fromMessages([
     [
       'system',
-      `You are an assistant for a React course. Answer in your own words using the provided context. Do not copy the context text verbatim — paraphrase. If you include code examples, write your own, do not copy from the context. If the context does not contain the answer, say:
+      `You are an assistant for React and Vue courses. Answer in your own words using the provided context. Do not copy the context text verbatim — paraphrase. If you include code examples, write your own, do not copy from the context. If the context does not contain the answer, say:
 "В моей базе знаний не нашлось ответа на этот вопрос. Попробуйте самостоятельно поискать ответ."
 Be brief. Do not use concluding phrases like "Таким образом", "В итоге", "Итак" etc.`,
     ],

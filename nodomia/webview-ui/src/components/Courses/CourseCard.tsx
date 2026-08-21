@@ -1,15 +1,12 @@
 import type { CourseListItem, UserProgress } from '../../types/messages';
 import { pluralize } from '../../utils/plural';
 import { completedCountForCourse } from '../../utils/progress';
+import { categoryInfo } from '../../utils/categories';
 
 interface CourseCardProps {
   course: CourseListItem;
   onEnter: () => void;
   progress: UserProgress;
-}
-
-function progressColor(pct: number): string {
-  return pct === 100 ? '#29b6f6' : '#4fc3f7';
 }
 
 export default function CourseCard({
@@ -37,7 +34,10 @@ export default function CourseCard({
   );
 
   return (
-    <div className="card-wrapper">
+    <div
+      className="card-wrapper"
+      style={{ '--card-accent': categoryInfo(course.category).accent } as React.CSSProperties}
+    >
       <div className="card" onClick={onEnter}>
         <div className="card-header">
           <div className="card-header-left">
@@ -49,10 +49,7 @@ export default function CourseCard({
             </div>
           </div>
           {percent > 0 && (
-            <span
-              className="card-progress"
-              style={{ color: progressColor(percent) }}
-            >
+            <span className="card-progress">
               {percent}%
             </span>
           )}

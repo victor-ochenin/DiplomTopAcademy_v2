@@ -164,7 +164,7 @@ body.rag-panel-open .accordion {
   padding: 14px;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(0, 210, 255, 0.15);
+  border: 1px solid color-mix(in srgb, var(--card-accent, #00d2ff) 25%, transparent);
   cursor: pointer;
   transition:
     transform 0.2s ease,
@@ -173,7 +173,7 @@ body.rag-panel-open .accordion {
 
 .card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 210, 255, 0.1);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--card-accent, #00d2ff) 20%, transparent);
 }
 
 .card::before {
@@ -186,9 +186,7 @@ body.rag-panel-open .accordion {
   background: linear-gradient(
     90deg,
     transparent,
-    #00d2ff,
-    #00f5d4,
-    #00d2ff,
+    var(--card-accent, #00d2ff),
     transparent
   );
   filter: blur(0.5px);
@@ -203,7 +201,7 @@ body.rag-panel-open .accordion {
   bottom: 0;
   background: radial-gradient(
     ellipse at top center,
-    rgba(0, 210, 255, 0.04) 0%,
+    color-mix(in srgb, var(--card-accent, #00d2ff) 8%, transparent) 0%,
     transparent 60%
   );
   pointer-events: none;
@@ -254,9 +252,9 @@ body.rag-panel-open .accordion {
 }
 
 .level-beginner {
-  background: rgba(0, 210, 180, 0.15);
-  color: #00d2b4;
-  border-color: rgba(0, 210, 180, 0.25);
+  background: color-mix(in srgb, var(--card-accent, #00d2b4) 15%, transparent);
+  color: var(--card-accent, #00d2b4);
+  border-color: color-mix(in srgb, var(--card-accent, #00d2b4) 30%, transparent);
 }
 
 .level-intermediate {
@@ -335,6 +333,50 @@ body.rag-panel-open .courses-page {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+}
+
+/* ── Course sections ── */
+
+.course-section {
+  margin-bottom: 28px;
+}
+
+.course-section__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.course-section__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--section-accent, #00d2ff);
+  box-shadow: 0 0 8px var(--section-accent, #00d2ff);
+}
+
+.course-section__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.course-section__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.course-section__count {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 /* ── Lesson ── */
@@ -814,6 +856,7 @@ body.rag-panel-open .task {
   font-weight: 700;
   flex-shrink: 0;
   line-height: 1.4;
+  color: var(--card-accent, #00d2ff);
 }
 .lesson-progress {
   font-size: 12px;

@@ -276,12 +276,20 @@ export async function ensureWebIndex(): Promise<void> {
 
 // Объединяет результаты поиска по документам курсов и веб-источникам.
 // Сначала веб-документы, затем курсы (веб-документы обычно актуальнее).
+// Каждый кусок помечается меткой источника, чтобы LLM могла различать их.
 export async function queryAll(text: string): Promise<DocumentResult[]> {
   const [courseDocs, webDocs] = await Promise.all([
-    queryCollection!(text, 2),
-    webQueryCollection!(text, 2),
+    queryCollection!(text, 4),
+    webQueryCollection!(text, 4),
   ])
-  return [...webDocs, ...courseDocs]
+  return [
+    ...webDocs.map((d) => ({
+      pageContent: `[Официальная документация] ${d.pageContent}`,
+    })),
+    ...courseDocs.map((d) => ({
+      pageContent: `[Урок] ${d.pageContent}`,
+    })),
+  ]
 }
 
 export { LESSONS_DIR }
