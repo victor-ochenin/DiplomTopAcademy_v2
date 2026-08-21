@@ -28,21 +28,14 @@
       "id": "mustache-syntax",
       "type": "choice",
       "question": "Как вывести значение переменной message в шаблоне Vue?",
-      "options": [
-        "{{ message }}",
-        "{message}",
-        "@message",
-        "v:message"
-      ],
+      "options": ["{{ message }}", "{message}", "@message", "v:message"],
       "correctAnswer": "{{ message }}"
     },
     {
       "id": "v-bind-shorthand",
       "type": "open",
       "question": "Как записать v-bind:href=\"url\" в сокращённой форме?",
-      "acceptableAnswers": [
-        ":href=\"url\""
-      ]
+      "acceptableAnswers": [":href=\"url\""]
     },
     {
       "id": "v-if-vs-v-show",
@@ -60,11 +53,7 @@
       "id": "v-for-key",
       "type": "open",
       "question": "Какой атрибут нужно указывать для элементов внутри v-for для их стабильной идентификации?",
-      "acceptableAnswers": [
-        "key",
-        ":key",
-        "атрибут key"
-      ]
+      "acceptableAnswers": ["key", ":key", "атрибут key"]
     },
     {
       "id": "v-for-output",

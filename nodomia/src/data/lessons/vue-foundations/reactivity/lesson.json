@@ -43,12 +43,7 @@
       "id": "refs-in-templates",
       "type": "choice",
       "question": "Как обратиться к ref-переменной count внутри <template>?",
-      "options": [
-        "count",
-        "count.value",
-        "$ref.count",
-        "count()"
-      ],
+      "options": ["count", "count.value", "$ref.count", "count()"],
       "correctAnswer": "count"
     },
     {

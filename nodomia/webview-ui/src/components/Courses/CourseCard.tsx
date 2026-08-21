@@ -36,7 +36,11 @@ export default function CourseCard({
   return (
     <div
       className="card-wrapper"
-      style={{ '--card-accent': categoryInfo(course.category).accent } as React.CSSProperties}
+      style={
+        {
+          '--card-accent': categoryInfo(course.category).accent,
+        } as React.CSSProperties
+      }
     >
       <div className="card" onClick={onEnter}>
         <div className="card-header">
@@ -48,11 +52,7 @@ export default function CourseCard({
               </div>
             </div>
           </div>
-          {percent > 0 && (
-            <span className="card-progress">
-              {percent}%
-            </span>
-          )}
+          {percent > 0 && <span className="card-progress">{percent}%</span>}
         </div>
 
         <span className={`level-badge level-${course.level}`}>

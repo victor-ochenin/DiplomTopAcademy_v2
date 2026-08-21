@@ -164,7 +164,8 @@ body.rag-panel-open .accordion {
   padding: 14px;
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--card-accent, #00d2ff) 25%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--card-accent, #00d2ff) 25%, transparent);
   cursor: pointer;
   transition:
     transform 0.2s ease,
@@ -173,7 +174,8 @@ body.rag-panel-open .accordion {
 
 .card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--card-accent, #00d2ff) 20%, transparent);
+  box-shadow: 0 4px 12px
+    color-mix(in srgb, var(--card-accent, #00d2ff) 20%, transparent);
 }
 
 .card::before {
@@ -254,7 +256,11 @@ body.rag-panel-open .accordion {
 .level-beginner {
   background: color-mix(in srgb, var(--card-accent, #00d2b4) 15%, transparent);
   color: var(--card-accent, #00d2b4);
-  border-color: color-mix(in srgb, var(--card-accent, #00d2b4) 30%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--card-accent, #00d2b4) 30%,
+    transparent
+  );
 }
 
 .level-intermediate {

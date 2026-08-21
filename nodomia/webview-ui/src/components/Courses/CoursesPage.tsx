@@ -60,12 +60,7 @@ export default function CoursesPage({
               {info.label}
               <span className="course-section__count">
                 {section.courses.length}{' '}
-                {pluralize(
-                  section.courses.length,
-                  'курс',
-                  'курса',
-                  'курсов',
-                )}
+                {pluralize(section.courses.length, 'курс', 'курса', 'курсов')}
               </span>
             </h2>
             <div className="courses-grid">

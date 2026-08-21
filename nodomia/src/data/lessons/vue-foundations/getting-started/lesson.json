@@ -61,7 +61,12 @@
         "Есть src/App.vue"
       ],
       "starterCode": "",
-      "expectedFiles": ["package.json", "index.html", "src/main.js", "src/App.vue"]
+      "expectedFiles": [
+        "package.json",
+        "index.html",
+        "src/main.js",
+        "src/App.vue"
+      ]
     },
     {
       "id": "scoped-styles-purpose",
