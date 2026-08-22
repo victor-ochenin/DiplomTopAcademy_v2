@@ -1,6 +1,6 @@
 # Nodomia
 
-Образовательный тренажёр по React в виде расширения VS Code с персонализированным RAG-ассистентом.
+Образовательный тренажёр в виде расширения VS Code с персонализированным RAG-ассистентом.
 
 > Этот репозиторий — продолжение
 > [DiplomTopAcademy](https://github.com/victor-ochenin/DiplomTopAcademy).
