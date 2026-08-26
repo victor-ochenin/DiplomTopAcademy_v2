@@ -1,7 +1,9 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
+import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import 'dotenv/config'
 import {
@@ -17,17 +19,32 @@ const QuerySchema = z.object({
 })
 
 const CheckCodeSchema = z.object({
-  taskId: z.string(),
-  lessonId: z.string(),
-  code: z.string(),
+  taskId: z.string().min(1),
+  lessonId: z.string().min(1),
+  code: z.string().min(1),
 })
+
+const validate = <T extends z.ZodTypeAny>(
+  target: 'json',
+  schema: T,
+  errorMessage: string,
+) =>
+  zValidator(target, schema, (result, c) => {
+    if (!result.success) return c.json({ error: errorMessage }, 400)
+  })
 
 const app = new Hono()
 
-// Логирует каждый входящий запрос: метод, путь, статус, время ответа
 app.use('*', logger())
-
 app.use('/api/*', cors())
+
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    return c.json({ error: err.message }, err.status)
+  }
+  console.error('unhandled:', err)
+  return c.json({ error: 'Internal Server Error' }, 500)
+})
 
 let ready = false
 initRag()
@@ -39,49 +56,36 @@ initRag()
     console.error('RAG init failed:', err)
   })
 
-// Запрос к RAG: вопрос от пользователя → ответ по материалам курса
-app.post('/api/query', async (c) => {
-  if (!ready) return c.json({ error: 'RAG not ready' }, 503)
-  const body = await c.req.json().catch(() => null)
-  const parsed = QuerySchema.safeParse(body ?? {})
-  if (!parsed.success) {
-    const issue = parsed.error.issues[0]
-    return c.json(
-      { error: `${issue.path.join('.') || 'body'}: ${issue.message}` },
-      400,
-    )
-  }
-  const result = await queryRag(parsed.data.question, parsed.data.history)
-  return c.json(result)
-})
-
-// Проверка кода пользователя через LLM. Читает lesson.json, находит задачу по taskId,
-// отправляет код + критерии в LLM, возвращает { passed, feedback }.
-app.post('/api/check-code', async (c) => {
-  const body = await c.req.json().catch(() => null)
-  const parsed = CheckCodeSchema.safeParse(body ?? {})
-  if (!parsed.success) {
-    return c.json({ error: 'taskId, lessonId and code are required' }, 400)
-  }
-  try {
-    const result = await checkCode(
-      parsed.data.taskId,
-      parsed.data.lessonId,
-      parsed.data.code,
-    )
+app.post(
+  '/api/query',
+  validate('json', QuerySchema, 'question is required'),
+  async (c) => {
+    if (!ready) throw new HTTPException(503, { message: 'RAG not ready' })
+    const { question, history } = c.req.valid('json')
+    const result = await queryRag(question, history)
     return c.json(result)
-  } catch (err) {
-    console.error('check-code failed', err)
-    return c.json({ error: 'Failed to check code' }, 500)
-  }
-})
+  },
+)
+
+app.post(
+  '/api/check-code',
+  validate('json', CheckCodeSchema, 'taskId, lessonId and code are required'),
+  async (c) => {
+    const { taskId, lessonId, code } = c.req.valid('json')
+    try {
+      const result = await checkCode(taskId, lessonId, code)
+      return c.json(result)
+    } catch (err) {
+      console.error('check-code failed', err)
+      throw new HTTPException(500, { message: 'Failed to check code' })
+    }
+  },
+)
 
 const port = Number(process.env.PORT || 3001)
-// не стартуем HTTP-сервер во время тестов — Vitest выставляет NODE_ENV=test
 if (process.env.NODE_ENV !== 'test') {
   serve({ fetch: app.fetch, port })
   console.log(`Server on http://localhost:${port}`)
 }
 
-// экспорт app для тестов: app.request() симулирует HTTP без реального сервера
 export { app }

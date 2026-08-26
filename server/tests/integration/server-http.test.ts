@@ -64,6 +64,15 @@ describe('POST /api/query', () => {
     const body = await res.json()
     expect(body.error).toContain('question')
   })
+
+  it('returns 400 when question is empty string', async () => {
+    const res = await app.request('/api/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: '' }),
+    })
+    expect(res.status).toBe(400)
+  })
 })
 
 describe('POST /api/check-code', () => {
@@ -83,6 +92,17 @@ describe('POST /api/check-code', () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ taskId: 't1', lessonId: 'l1' }),
+    })
+    expect(res.status).toBe(400)
+    const body = await res.json()
+    expect(body.error).toBe('taskId, lessonId and code are required')
+  })
+
+  it('returns 400 when fields are empty strings', async () => {
+    const res = await app.request('/api/check-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId: '', lessonId: '', code: '' }),
     })
     expect(res.status).toBe(400)
     const body = await res.json()
