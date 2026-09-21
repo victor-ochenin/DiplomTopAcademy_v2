@@ -6,6 +6,7 @@ import { logger } from 'hono/logger'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import 'dotenv/config'
+import { APIError, APIConnectionError, RateLimitError } from '@typesafe-ai/sdk'
 import {
   initRag,
   queryRag,
@@ -71,11 +72,34 @@ app.post(
   '/api/check-code',
   validate('json', CheckCodeSchema, 'taskId, lessonId and code are required'),
   async (c) => {
+    if (!ready) throw new HTTPException(503, { message: 'RAG not ready' })
     const { taskId, lessonId, code } = c.req.valid('json')
     try {
       const result = await checkCode(taskId, lessonId, code)
       return c.json(result)
     } catch (err) {
+      // Ошибки TypeSafe маппим осмысленно: ретраи на 429/5xx SDK уже сделал сам,
+      // поэтому сюда долетает только исчерпанный бюджет или неретраибельный ответ.
+      // APIConnectionError (и его подкласс APITimeoutError) НЕ наследует APIError,
+      // поэтому проверяется отдельно — иначе DNS/TLS/таймаут упадут в общий 500.
+      if (err instanceof APIConnectionError) {
+        console.error('check-code: TypeSafe transport error', err.message)
+        throw new HTTPException(503, { message: 'Grading service unavailable' })
+      }
+      if (err instanceof APIError) {
+        console.error('check-code: TypeSafe API error', err.status, err.body)
+        if (err instanceof RateLimitError) {
+          throw new HTTPException(503, { message: 'Grading service busy' })
+        }
+        if (err.status >= 500) {
+          throw new HTTPException(503, {
+            message: 'Grading service unavailable',
+          })
+        }
+        throw new HTTPException(502, {
+          message: 'Grading service rejected the request',
+        })
+      }
       console.error('check-code failed', err)
       throw new HTTPException(500, { message: 'Failed to check code' })
     }

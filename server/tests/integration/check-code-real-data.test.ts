@@ -47,6 +47,7 @@ try {
 }
 
 import { createMockLLM } from '../helpers/test-utils'
+import { setGradingClientFactory } from '../../src/rag/grading.js'
 
 const { mockRunnable } = createMockLLM()
 
@@ -75,6 +76,32 @@ async function getCheckCode() {
   return checkCode
 }
 
+// Фейковый jev: фиксируем последний запрос, чтобы проверить, что реальные
+// критерии из lesson.json действительно доходят до модели.
+function installFakeGrading(captured: { request?: unknown }) {
+  setGradingClientFactory(() => ({
+    async systemOne(request: unknown) {
+      captured.request = request
+      const criteria = (request as { state: { task: { criteria: string[] } } })
+        .state.task.criteria
+      return {
+        model: 'jev-fake',
+        answers: {
+          ...Object.fromEntries(
+            criteria.map((_c, index) => [
+              `criterion_${index}`,
+              { type: 'noul', noul: 1 },
+            ]),
+          ),
+          has_blocking_violation: { type: 'noul', noul: 0 },
+          overall: { type: 'score', score: 3, confidence: 0.9 },
+        },
+        usage: { input_tokens: 10, output_tokens: 5 },
+      }
+    },
+  }))
+}
+
 describe('checkCode with real lesson data', () => {
   if (allCodingTasks.length === 0) {
     it('пропущен — папка data/lessons не найдена', () => {
@@ -87,14 +114,28 @@ describe('checkCode with real lesson data', () => {
 
     for (const { lessonId, course, task } of allCodingTasks) {
       it(`[${course}/${lessonId}] ${task.id}: находит задачу и передаёт criteria`, async () => {
-        mockRunnable.invoke.mockReset()
-        mockRunnable.invoke.mockResolvedValue('{"passed":true,"feedback":"ok"}')
+        const captured: { request?: unknown } = {}
+        installFakeGrading(captured)
         const fn = await getCheckCode()
         const result = await fn(task.id, lessonId, 'mock code')
-        expect(result).toEqual({ passed: true, feedback: 'ok' })
-        const args = mockRunnable.invoke.mock.calls[0][0]
-        expect(args.criteria).toBe(task.criteria.join('\n'))
-        expect(args.code).toBe('mock code')
+
+        // Реальные критерии и формулировка задания уходят в jev как state,
+        // а не склеенной строкой промпта.
+        const request = captured.request as {
+          state: {
+            task: { criteria: string[]; question: string }
+            submission: { code: string }
+          }
+          questions: Record<string, unknown>
+        }
+        expect(request.state.task.criteria).toEqual(task.criteria)
+        expect(request.state.task.question).toBe(task.question)
+        expect(request.state.submission.code).toBe('mock code')
+        expect(Object.keys(request.questions)).toContain('overall')
+
+        // Контракт ответа прежний: { passed, feedback } с непустым текстом.
+        expect(typeof result.passed).toBe('boolean')
+        expect(result.feedback.length).toBeGreaterThan(0)
       })
     }
   }

@@ -12,11 +12,8 @@ import {
   LESSONS_DIR,
 } from './vectorStore.js'
 import { OpenRouterEmbeddingFunction } from './embeddings.js'
+import { gradeSubmission, type GradingVerdict } from './grading.js'
 
-const CheckResultSchema = z.object({
-  passed: z.boolean(),
-  feedback: z.string(),
-})
 export const HistoryMessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
   text: z.string(),
@@ -26,6 +23,7 @@ const CodingTaskSchema = z.object({
   id: z.string().min(1),
   type: z.literal('coding'),
   kind: z.enum(['file', 'project']),
+  question: z.string().min(1),
   criteria: z.array(z.string().min(1)).min(1),
 })
 
@@ -93,8 +91,34 @@ Be brief. Do not use concluding phrases like "Таким образом", "В и
   return { answer }
 }
 
-// Проверяет код пользователя через LLM. Находит задачу по taskId в lesson.json,
-// отправляет код + критерии в LLM, возвращает { passed, feedback }.
+// Собирает текст фидбека из типизированного вердикта. Чистый маппинг
+// failedCriteria → текст, без второго обращения к LLM (стоимость не удваивается).
+export function buildFeedback(verdict: GradingVerdict): string {
+  if (verdict.blocking) {
+    return 'Решение не прошло проверку: обнаружено блокирующее нарушение — код не компилируется, нарушает правила темы или не относится к заданию.'
+  }
+
+  if (verdict.passed) {
+    return failedCriteriaFeedback(verdict.failedCriteria) === ''
+      ? 'Все критерии задания выполнены. Отличная работа!'
+      : ''
+  }
+
+  const details = failedCriteriaFeedback(verdict.failedCriteria)
+  if (details !== '') return `Задание не зачтено.\n${details}`
+
+  return 'Задание не зачтено: решение не соответствует критериям в достаточной мере.'
+}
+
+function failedCriteriaFeedback(failedCriteria: string[]): string {
+  if (failedCriteria.length === 0) return ''
+  const bullets = failedCriteria.map((c) => `— ${c}`).join('\n')
+  return `Не выполнены критерии:\n${bullets}`
+}
+
+// Проверяет код пользователя. Находит задачу по taskId в lesson.json,
+// получает типизированный вердикт от jev (gradeSubmission) и собирает фидбек в коде,
+// возвращая прежний контракт { passed, feedback }.
 export async function checkCode(
   taskId: string,
   lessonId: string,
@@ -121,42 +145,19 @@ export async function checkCode(
   if (!task.success)
     throw new Error(`Task ${taskId} invalid: ${task.error.issues[0].message}`)
 
-  const prompt = ChatPromptTemplate.fromMessages([
-    [
-      'system',
-      `You are a code reviewer. Check the provided code against the criteria.
-Return JSON: {{ "passed": true/false, "feedback": "explanation in Russian" }}
-Do NOT fix the code. Do NOT write a solution. Just evaluate.${task.data.kind === 'project' ? ' The code contains multiple project files separated by "--- filename ---" markers.' : ''}`,
-    ],
-    ['human', `Criteria:\n{criteria}\n\nCode:\n{code}`],
-  ])
+  // Типизированный вердикт от jev: битый JSON невозможен, интерфейс гарантирован.
+  const verdict = await gradeSubmission(task.data, code)
 
-  let answer: string
-  try {
-    answer = await prompt
-      .pipe(model)
-      .pipe(new StringOutputParser())
-      .invoke({
-        criteria: task.data.criteria.join('\n'),
-        code,
-      })
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err)
-    throw new Error(`LLM request failed: ${msg}`)
+  if (verdict.needsReview) {
+    console.warn(
+      `Nodomia: check-code needs review (task=${taskId}, lesson=${lessonId}, coverage=${verdict.coverage.toFixed(2)})`,
+    )
   }
+  console.log(
+    `Nodomia: check-code usage input=${verdict.usage.input_tokens} output=${verdict.usage.output_tokens}`,
+  )
 
-  const cleaned = answer.replace(/```json|```/g, '').trim()
-  let parsed: unknown
-  try {
-    parsed = JSON.parse(cleaned)
-  } catch {
-    /* fallback ниже */
-  }
-  const result = CheckResultSchema.safeParse(parsed)
-  if (!result.success) {
-    return { passed: false, feedback: 'Не удалось обработать ответ проверки.' }
-  }
-  return result.data
+  return { passed: verdict.passed, feedback: buildFeedback(verdict) }
 }
 
 export { LESSONS_DIR }

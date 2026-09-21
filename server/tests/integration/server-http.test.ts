@@ -136,4 +136,74 @@ describe('POST /api/check-code', () => {
     const body = await res.json()
     expect(body.error).toBe('Failed to check code')
   })
+
+  // Транспортные сбои TypeSafe (DNS/TLS/таймаут) не наследуют APIError,
+  // поэтому должны проверяться отдельно и давать 503, а не общий 500.
+  it('returns 503 for a TypeSafe transport error', async () => {
+    const { APIConnectionError, APITimeoutError } =
+      await import('@typesafe-ai/sdk')
+    mockCheckCode.mockRejectedValueOnce(
+      new APIConnectionError('connect ECONNREFUSED'),
+    )
+    const res = await app.request('/api/check-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId: 't1', lessonId: 'l1', code: 'x' }),
+    })
+    expect(res.status).toBe(503)
+    expect((await res.json()).error).toBe('Grading service unavailable')
+
+    // APITimeoutError — подкласс APIConnectionError, обрабатывается так же.
+    mockCheckCode.mockRejectedValueOnce(new APITimeoutError(10_000))
+    const timeoutRes = await app.request('/api/check-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId: 't1', lessonId: 'l1', code: 'x' }),
+    })
+    expect(timeoutRes.status).toBe(503)
+  })
+
+  it('returns 503 when TypeSafe rate-limits the request', async () => {
+    const { RateLimitError } = await import('@typesafe-ai/sdk')
+    mockCheckCode.mockRejectedValueOnce(
+      new RateLimitError(429, {}, new Headers()),
+    )
+    const res = await app.request('/api/check-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId: 't1', lessonId: 'l1', code: 'x' }),
+    })
+    expect(res.status).toBe(503)
+    expect((await res.json()).error).toBe('Grading service busy')
+  })
+
+  it('returns 503 when the grading service returns a 5xx', async () => {
+    const { InternalServerError } = await import('@typesafe-ai/sdk')
+    mockCheckCode.mockRejectedValueOnce(
+      new InternalServerError(500, {}, new Headers()),
+    )
+    const res = await app.request('/api/check-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId: 't1', lessonId: 'l1', code: 'x' }),
+    })
+    expect(res.status).toBe(503)
+    expect((await res.json()).error).toBe('Grading service unavailable')
+  })
+
+  it('returns 502 when the grading service rejects the request', async () => {
+    const { UnprocessableEntityError } = await import('@typesafe-ai/sdk')
+    mockCheckCode.mockRejectedValueOnce(
+      new UnprocessableEntityError(422, {}, new Headers()),
+    )
+    const res = await app.request('/api/check-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId: 't1', lessonId: 'l1', code: 'x' }),
+    })
+    expect(res.status).toBe(502)
+    expect((await res.json()).error).toBe(
+      'Grading service rejected the request',
+    )
+  })
 })
