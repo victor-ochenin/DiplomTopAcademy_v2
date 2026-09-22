@@ -66,7 +66,7 @@ export function setGradingClientFactory(
   cachedClient = null
 }
 
-function getClient(): TypeSafeLikeClient {
+export function getClient(): TypeSafeLikeClient {
   cachedClient ??= clientFactory()
   return cachedClient
 }
@@ -78,7 +78,7 @@ export function hasApiKey(): boolean {
 // Ответы приходят под динамическими ключами (criterion_0, criterion_1, ...),
 // поэтому одного статического вывода типов SDK недостаточно — читаем через
 // проверяемый хелпер, который бросает при неожиданной форме ответа.
-function noulValue(
+export function noulValue(
   answers: Record<string, unknown>,
   questionId: string,
 ): number {
@@ -94,7 +94,7 @@ function noulValue(
   return (answer as { noul: number }).noul
 }
 
-function scoreValue(
+export function scoreValue(
   answers: Record<string, unknown>,
   questionId: string,
 ): { score: number; confidence: number } {

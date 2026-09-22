@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { ChatOpenAI } from '@langchain/openai'
+import { ChatOpenAI, type ClientOptions } from '@langchain/openai'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { z } from 'zod'
@@ -13,6 +13,7 @@ import {
 } from './vectorStore.js'
 import { OpenRouterEmbeddingFunction } from './embeddings.js'
 import { gradeSubmission, type GradingVerdict } from './grading.js'
+import { filterContext } from './retrieval.js'
 
 export const HistoryMessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -27,12 +28,53 @@ const CodingTaskSchema = z.object({
   criteria: z.array(z.string().min(1)).min(1),
 })
 
+// OpenRouter при перегрузке провайдера отвечает 200, но в теле `error` вместо
+// `choices`. openai-SDK такой статус не ретраит, LangChain строит пустой
+// generations и падает на `chatGeneration.message` (TypeError). Превращаем
+// ответ без choices в 503 — SDK ретраит по status >= 500 (maxRetries: 2).
+export async function openRouterFetch(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<Response> {
+  const res = await fetch(input, init)
+  if (res.status !== 200) return res
+
+  let text: string
+  try {
+    text = await res.clone().text()
+  } catch {
+    return res
+  }
+
+  let body: unknown
+  try {
+    body = JSON.parse(text)
+  } catch {
+    return res
+  }
+
+  const choices =
+    body && typeof body === 'object'
+      ? (body as { choices?: unknown }).choices
+      : undefined
+  if (Array.isArray(choices) && choices.length > 0) return res
+
+  return new Response(text, {
+    status: 503,
+    statusText: 'Service Unavailable',
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
 const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   model: 'nvidia/nemotron-3-super-120b-a12b:free',
   temperature: 0.3,
   configuration: {
     baseURL: process.env.OPENAI_BASE_URL || 'https://openrouter.ai/api/v1',
+    // openai-SDK и глобальный fetch используют несовместимые RequestInfo
+    // из разных шимов — рантайм один (undici), cast только на типах.
+    fetch: openRouterFetch as unknown as ClientOptions['fetch'],
   },
 })
 
@@ -65,6 +107,15 @@ export async function queryRag(
 ): Promise<{ answer: string }> {
   const docs = await queryAll(question)
 
+  // Фильтр контекста: relevance + анти-injection + противоречия, пороги в коде.
+  // Недоверенный ввод (webFetcher → cheerio) не доходит до промпта.
+  const filtered = await filterContext(question, docs)
+  console.log(
+    `Nodomia: retrieval kept=${filtered.kept.length}/${filtered.total}` +
+      ` (injection=${filtered.droppedInjection}, contradicts=${filtered.droppedContradicts}, irrelevant=${filtered.droppedIrrelevant})` +
+      ` input=${filtered.usage.input_tokens} output=${filtered.usage.output_tokens}`,
+  )
+
   const historyBlock = history?.length
     ? history.map((m) => `${m.role}: ${m.text}`).join('\n') + '\n\n'
     : ''
@@ -84,7 +135,7 @@ Be brief. Do not use concluding phrases like "Таким образом", "В и
     .pipe(new StringOutputParser())
     .invoke({
       history: historyBlock,
-      context: docs.map((d) => d.pageContent).join('\n\n'),
+      context: filtered.kept.map((d) => d.pageContent).join('\n\n'),
       question,
     })
 
@@ -99,9 +150,10 @@ export function buildFeedback(verdict: GradingVerdict): string {
   }
 
   if (verdict.passed) {
-    return failedCriteriaFeedback(verdict.failedCriteria) === ''
+    const remarks = failedCriteriaFeedback(verdict.failedCriteria)
+    return remarks === ''
       ? 'Все критерии задания выполнены. Отличная работа!'
-      : ''
+      : `Задание зачтено, но есть замечания.\n${remarks}`
   }
 
   const details = failedCriteriaFeedback(verdict.failedCriteria)
