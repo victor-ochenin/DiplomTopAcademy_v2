@@ -1,4 +1,4 @@
-import { ChromaClient } from 'chromadb'
+import { ChromaClient, ChromaNotFoundError } from 'chromadb'
 import { createHash } from 'node:crypto'
 import {
   readFileSync,
@@ -193,7 +193,14 @@ async function ensureCollection(
     /* not exist */
   }
 
-  if (current && current !== prev) {
+  // Коллекция переиндексируется, если изменилась чексумма ИЛИ если коллекции
+  // фактически нет в Chroma: файл чексуммы переживает пересоздание контейнера
+  // Chroma (data/chroma — это volume), поэтому «совпадающий» чексумма-файл
+  // при пустой базе оставлял бы нас с несуществующей коллекцией.
+  const collectionExists = await hasCollection(client, name)
+  const needsReindex = !collectionExists || (current && current !== prev)
+
+  if (needsReindex) {
     try {
       await client.deleteCollection({ name })
     } catch {
@@ -238,6 +245,23 @@ async function ensureCollection(
     return (r.documents?.[0] ?? []).map((content) => ({
       pageContent: content ?? '',
     }))
+  }
+}
+
+// Проверяет наличие коллекции в Chroma. Отсутствие коллекции — ожидаемая ветка
+// (ChromaNotFoundError), всё остальное (транспорт, 5xx, авторизация) — реальный
+// сбой: его нельзя выдавать за «коллекции нет», иначе несинхронная ошибка связи
+// приведёт к удалению и пересозданию валидной коллекции.
+async function hasCollection(
+  client: ChromaClient,
+  name: string,
+): Promise<boolean> {
+  try {
+    await client.getCollection({ name })
+    return true
+  } catch (err) {
+    if (err instanceof ChromaNotFoundError) return false
+    throw err
   }
 }
 

@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { ChatOpenAI } from '@langchain/openai'
+import { ChatOpenAI, type ClientOptions } from '@langchain/openai'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { z } from 'zod'
@@ -12,11 +12,10 @@ import {
   LESSONS_DIR,
 } from './vectorStore.js'
 import { OpenRouterEmbeddingFunction } from './embeddings.js'
+import { gradeSubmission, type GradingVerdict } from './grading.js'
+import { filterContext } from './retrieval.js'
+import { routeQuestion, CLARIFY_MESSAGE, OFF_TOPIC_MESSAGE } from './routing.js'
 
-const CheckResultSchema = z.object({
-  passed: z.boolean(),
-  feedback: z.string(),
-})
 export const HistoryMessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
   text: z.string(),
@@ -26,8 +25,47 @@ const CodingTaskSchema = z.object({
   id: z.string().min(1),
   type: z.literal('coding'),
   kind: z.enum(['file', 'project']),
+  question: z.string().min(1),
   criteria: z.array(z.string().min(1)).min(1),
 })
+
+// OpenRouter при перегрузке провайдера отвечает 200, но в теле `error` вместо
+// `choices`. openai-SDK такой статус не ретраит, LangChain строит пустой
+// generations и падает на `chatGeneration.message` (TypeError). Превращаем
+// ответ без choices в 503 — SDK ретраит по status >= 500 (maxRetries: 2).
+export async function openRouterFetch(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<Response> {
+  const res = await fetch(input, init)
+  if (res.status !== 200) return res
+
+  let text: string
+  try {
+    text = await res.clone().text()
+  } catch {
+    return res
+  }
+
+  let body: unknown
+  try {
+    body = JSON.parse(text)
+  } catch {
+    return res
+  }
+
+  const choices =
+    body && typeof body === 'object'
+      ? (body as { choices?: unknown }).choices
+      : undefined
+  if (Array.isArray(choices) && choices.length > 0) return res
+
+  return new Response(text, {
+    status: 503,
+    statusText: 'Service Unavailable',
+    headers: { 'content-type': 'application/json' },
+  })
+}
 
 const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -35,6 +73,9 @@ const model = new ChatOpenAI({
   temperature: 0.3,
   configuration: {
     baseURL: process.env.OPENAI_BASE_URL || 'https://openrouter.ai/api/v1',
+    // openai-SDK и глобальный fetch используют несовместимые RequestInfo
+    // из разных шимов — рантайм один (undici), cast только на типах.
+    fetch: openRouterFetch as unknown as ClientOptions['fetch'],
   },
 })
 
@@ -58,43 +99,117 @@ export async function initRag(): Promise<void> {
   await ensureWebIndex()
 }
 
-// RAG-запрос: ищет релевантные документы по вопросу, формирует контекст и отправляет в LLM.
+// RAG-запрос: роутит намерение, при course_question ищет и фильтрует
+// контекст, затем отправляет в LLM.
 // history — опциональная переписка для поддержания контекста диалога.
-// Возвращает ответ на основе найденных документов.
 export async function queryRag(
   question: string,
   history?: HistoryMessage[],
 ): Promise<{ answer: string }> {
-  const docs = await queryAll(question)
+  const route = await routeQuestion(question)
+  console.log(
+    `Nodomia: routing kind=${route.kind} selected=${route.selected}` +
+      ` confidence=${route.confidence.toFixed(2)}` +
+      ` input=${route.usage.input_tokens} output=${route.usage.output_tokens}`,
+  )
+
+  // Ниже порога / не по теме — фиксированные тексты, без расхода контекста.
+  if (route.kind === 'clarify') return { answer: CLARIFY_MESSAGE }
+  if (route.kind === 'off_topic') return { answer: OFF_TOPIC_MESSAGE }
 
   const historyBlock = history?.length
     ? history.map((m) => `${m.role}: ${m.text}`).join('\n') + '\n\n'
     : ''
 
-  const prompt = ChatPromptTemplate.fromMessages([
-    [
-      'system',
-      `You are an assistant for React and Vue courses. Answer in your own words using the provided context. Do not copy the context text verbatim — paraphrase. If you include code examples, write your own, do not copy from the context. If the context does not contain the answer, say:
-"В моей базе знаний не нашлось ответа на этот вопрос. Попробуйте самостоятельно поискать ответ."
-Be brief. Do not use concluding phrases like "Таким образом", "В итоге", "Итак" etc.`,
-    ],
-    ['human', '{history}Context: {context}\n\nQuestion: {question}'],
-  ])
-
-  const answer = await prompt
-    .pipe(model)
-    .pipe(new StringOutputParser())
-    .invoke({
-      history: historyBlock,
-      context: docs.map((d) => d.pageContent).join('\n\n'),
+  // meta_question — без RAG: база знаний курса тут не нужна.
+  if (route.kind === 'meta_question') {
+    const answer = await invokeModel(
+      META_SYSTEM_PROMPT,
+      historyBlock,
+      '',
       question,
-    })
+    )
+    return { answer }
+  }
+
+  const docs = await queryAll(question)
+
+  // Фильтр контекста: relevance + анти-injection + противоречия, пороги в коде.
+  // Недоверенный ввод (webFetcher → cheerio) не доходит до промпта.
+  const filtered = await filterContext(question, docs)
+  console.log(
+    `Nodomia: retrieval kept=${filtered.kept.length}/${filtered.total}` +
+      ` (injection=${filtered.droppedInjection}, contradicts=${filtered.droppedContradicts}, irrelevant=${filtered.droppedIrrelevant})` +
+      ` input=${filtered.usage.input_tokens} output=${filtered.usage.output_tokens}`,
+  )
+
+  const answer = await invokeModel(
+    COURSE_SYSTEM_PROMPT,
+    historyBlock,
+    filtered.kept.map((d) => d.pageContent).join('\n\n'),
+    question,
+  )
 
   return { answer }
 }
 
-// Проверяет код пользователя через LLM. Находит задачу по taskId в lesson.json,
-// отправляет код + критерии в LLM, возвращает { passed, feedback }.
+const COURSE_SYSTEM_PROMPT = `You are an assistant for React and Vue courses. Answer in your own words using the provided context. Do not copy the context text verbatim — paraphrase. If you include code examples, write your own, do not copy from the context. If the context does not contain the answer, say:
+"В моей базе знаний не нашлось ответа на этот вопрос. Попробуйте самостоятельно поискать ответ."
+Be brief. Do not use concluding phrases like "Таким образом", "В итоге", "Итак" etc.`
+
+const META_SYSTEM_PROMPT = `You are an assistant inside the Nodomia trainer for React and Vue courses. Answer questions about the trainer itself: how checking works, what tasks are, how progress is shown. Do not invent personal progress numbers — if the student asks about their own progress, tell them where to find it in the interface. Be brief. Do not use concluding phrases like "Таким образом", "В итоге", "Итак" etc.`
+
+async function invokeModel(
+  systemPrompt: string,
+  historyBlock: string,
+  context: string,
+  question: string,
+): Promise<string> {
+  const prompt = ChatPromptTemplate.fromMessages([
+    ['system', systemPrompt],
+    [
+      'human',
+      context
+        ? '{history}Context: {context}\n\nQuestion: {question}'
+        : '{history}Question: {question}',
+    ],
+  ])
+
+  return prompt
+    .pipe(model)
+    .pipe(new StringOutputParser())
+    .invoke({ history: historyBlock, context, question })
+}
+
+// Собирает текст фидбека из типизированного вердикта. Чистый маппинг
+// failedCriteria → текст, без второго обращения к LLM (стоимость не удваивается).
+export function buildFeedback(verdict: GradingVerdict): string {
+  if (verdict.blocking) {
+    return 'Решение не прошло проверку: обнаружено блокирующее нарушение — код не компилируется, нарушает правила темы или не относится к заданию.'
+  }
+
+  if (verdict.passed) {
+    const remarks = failedCriteriaFeedback(verdict.failedCriteria)
+    return remarks === ''
+      ? 'Все критерии задания выполнены. Отличная работа!'
+      : `Задание зачтено, но есть замечания.\n${remarks}`
+  }
+
+  const details = failedCriteriaFeedback(verdict.failedCriteria)
+  if (details !== '') return `Задание не зачтено.\n${details}`
+
+  return 'Задание не зачтено: решение не соответствует критериям в достаточной мере.'
+}
+
+function failedCriteriaFeedback(failedCriteria: string[]): string {
+  if (failedCriteria.length === 0) return ''
+  const bullets = failedCriteria.map((c) => `— ${c}`).join('\n')
+  return `Не выполнены критерии:\n${bullets}`
+}
+
+// Проверяет код пользователя. Находит задачу по taskId в lesson.json,
+// получает типизированный вердикт от jev (gradeSubmission) и собирает фидбек в коде,
+// возвращая прежний контракт { passed, feedback }.
 export async function checkCode(
   taskId: string,
   lessonId: string,
@@ -121,42 +236,19 @@ export async function checkCode(
   if (!task.success)
     throw new Error(`Task ${taskId} invalid: ${task.error.issues[0].message}`)
 
-  const prompt = ChatPromptTemplate.fromMessages([
-    [
-      'system',
-      `You are a code reviewer. Check the provided code against the criteria.
-Return JSON: {{ "passed": true/false, "feedback": "explanation in Russian" }}
-Do NOT fix the code. Do NOT write a solution. Just evaluate.${task.data.kind === 'project' ? ' The code contains multiple project files separated by "--- filename ---" markers.' : ''}`,
-    ],
-    ['human', `Criteria:\n{criteria}\n\nCode:\n{code}`],
-  ])
+  // Типизированный вердикт от jev: битый JSON невозможен, интерфейс гарантирован.
+  const verdict = await gradeSubmission(task.data, code)
 
-  let answer: string
-  try {
-    answer = await prompt
-      .pipe(model)
-      .pipe(new StringOutputParser())
-      .invoke({
-        criteria: task.data.criteria.join('\n'),
-        code,
-      })
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err)
-    throw new Error(`LLM request failed: ${msg}`)
+  if (verdict.needsReview) {
+    console.warn(
+      `Nodomia: check-code needs review (task=${taskId}, lesson=${lessonId}, coverage=${verdict.coverage.toFixed(2)})`,
+    )
   }
+  console.log(
+    `Nodomia: check-code usage input=${verdict.usage.input_tokens} output=${verdict.usage.output_tokens}`,
+  )
 
-  const cleaned = answer.replace(/```json|```/g, '').trim()
-  let parsed: unknown
-  try {
-    parsed = JSON.parse(cleaned)
-  } catch {
-    /* fallback ниже */
-  }
-  const result = CheckResultSchema.safeParse(parsed)
-  if (!result.success) {
-    return { passed: false, feedback: 'Не удалось обработать ответ проверки.' }
-  }
-  return result.data
+  return { passed: verdict.passed, feedback: buildFeedback(verdict) }
 }
 
 export { LESSONS_DIR }
