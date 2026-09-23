@@ -14,6 +14,7 @@ import {
 import { OpenRouterEmbeddingFunction } from './embeddings.js'
 import { gradeSubmission, type GradingVerdict } from './grading.js'
 import { filterContext } from './retrieval.js'
+import { routeQuestion, CLARIFY_MESSAGE, OFF_TOPIC_MESSAGE } from './routing.js'
 
 export const HistoryMessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -98,13 +99,39 @@ export async function initRag(): Promise<void> {
   await ensureWebIndex()
 }
 
-// RAG-запрос: ищет релевантные документы по вопросу, формирует контекст и отправляет в LLM.
+// RAG-запрос: роутит намерение, при course_question ищет и фильтрует
+// контекст, затем отправляет в LLM.
 // history — опциональная переписка для поддержания контекста диалога.
-// Возвращает ответ на основе найденных документов.
 export async function queryRag(
   question: string,
   history?: HistoryMessage[],
 ): Promise<{ answer: string }> {
+  const route = await routeQuestion(question)
+  console.log(
+    `Nodomia: routing kind=${route.kind} selected=${route.selected}` +
+      ` confidence=${route.confidence.toFixed(2)}` +
+      ` input=${route.usage.input_tokens} output=${route.usage.output_tokens}`,
+  )
+
+  // Ниже порога / не по теме — фиксированные тексты, без расхода контекста.
+  if (route.kind === 'clarify') return { answer: CLARIFY_MESSAGE }
+  if (route.kind === 'off_topic') return { answer: OFF_TOPIC_MESSAGE }
+
+  const historyBlock = history?.length
+    ? history.map((m) => `${m.role}: ${m.text}`).join('\n') + '\n\n'
+    : ''
+
+  // meta_question — без RAG: база знаний курса тут не нужна.
+  if (route.kind === 'meta_question') {
+    const answer = await invokeModel(
+      META_SYSTEM_PROMPT,
+      historyBlock,
+      '',
+      question,
+    )
+    return { answer }
+  }
+
   const docs = await queryAll(question)
 
   // Фильтр контекста: relevance + анти-injection + противоречия, пороги в коде.
@@ -116,30 +143,42 @@ export async function queryRag(
       ` input=${filtered.usage.input_tokens} output=${filtered.usage.output_tokens}`,
   )
 
-  const historyBlock = history?.length
-    ? history.map((m) => `${m.role}: ${m.text}`).join('\n') + '\n\n'
-    : ''
-
-  const prompt = ChatPromptTemplate.fromMessages([
-    [
-      'system',
-      `You are an assistant for React and Vue courses. Answer in your own words using the provided context. Do not copy the context text verbatim — paraphrase. If you include code examples, write your own, do not copy from the context. If the context does not contain the answer, say:
-"В моей базе знаний не нашлось ответа на этот вопрос. Попробуйте самостоятельно поискать ответ."
-Be brief. Do not use concluding phrases like "Таким образом", "В итоге", "Итак" etc.`,
-    ],
-    ['human', '{history}Context: {context}\n\nQuestion: {question}'],
-  ])
-
-  const answer = await prompt
-    .pipe(model)
-    .pipe(new StringOutputParser())
-    .invoke({
-      history: historyBlock,
-      context: filtered.kept.map((d) => d.pageContent).join('\n\n'),
-      question,
-    })
+  const answer = await invokeModel(
+    COURSE_SYSTEM_PROMPT,
+    historyBlock,
+    filtered.kept.map((d) => d.pageContent).join('\n\n'),
+    question,
+  )
 
   return { answer }
+}
+
+const COURSE_SYSTEM_PROMPT = `You are an assistant for React and Vue courses. Answer in your own words using the provided context. Do not copy the context text verbatim — paraphrase. If you include code examples, write your own, do not copy from the context. If the context does not contain the answer, say:
+"В моей базе знаний не нашлось ответа на этот вопрос. Попробуйте самостоятельно поискать ответ."
+Be brief. Do not use concluding phrases like "Таким образом", "В итоге", "Итак" etc.`
+
+const META_SYSTEM_PROMPT = `You are an assistant inside the Nodomia trainer for React and Vue courses. Answer questions about the trainer itself: how checking works, what tasks are, how progress is shown. Do not invent personal progress numbers — if the student asks about their own progress, tell them where to find it in the interface. Be brief. Do not use concluding phrases like "Таким образом", "В итоге", "Итак" etc.`
+
+async function invokeModel(
+  systemPrompt: string,
+  historyBlock: string,
+  context: string,
+  question: string,
+): Promise<string> {
+  const prompt = ChatPromptTemplate.fromMessages([
+    ['system', systemPrompt],
+    [
+      'human',
+      context
+        ? '{history}Context: {context}\n\nQuestion: {question}'
+        : '{history}Question: {question}',
+    ],
+  ])
+
+  return prompt
+    .pipe(model)
+    .pipe(new StringOutputParser())
+    .invoke({ history: historyBlock, context, question })
 }
 
 // Собирает текст фидбека из типизированного вердикта. Чистый маппинг

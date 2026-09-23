@@ -112,6 +112,24 @@ export function scoreValue(
   return { score: typed.score, confidence: typed.confidence }
 }
 
+export function choiceValue(
+  answers: Record<string, unknown>,
+  questionId: string,
+): { choice: string; confidence: number } {
+  const answer = answers[questionId]
+  if (
+    typeof answer !== 'object' ||
+    answer === null ||
+    (answer as { type?: unknown }).type !== 'choice' ||
+    typeof (answer as { choice?: unknown }).choice !== 'string' ||
+    typeof (answer as { confidence?: unknown }).confidence !== 'number'
+  ) {
+    throw new Error(`TypeSafe: unexpected answer for question "${questionId}"`)
+  }
+  const typed = answer as { choice: string; confidence: number }
+  return { choice: typed.choice, confidence: typed.confidence }
+}
+
 // Один запрос к jev: по одному Noul на каждый критерий задания плюс Noul на
 // блокирующие нарушения и общий Score. Вся политика (пороги, композиция) — в коде,
 // поэтому вердикт воспроизводим и не зависит от того, как модель сформулировала текст.
